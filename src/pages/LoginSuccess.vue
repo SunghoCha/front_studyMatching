@@ -8,49 +8,21 @@
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
           <card type="login" plain>
-            <div slot="image">
-              <div class="social-icons">
-                <a href="https://link-to-facebook.com" target="_blank">
-                  <img src="/img/icon/google.png" alt="Google" class="social-icon"/>
-                </a>
-                <a href="https://link-to-google.com" target="_blank">
-                  <img src="/img/icon/naver.png" alt="Naver" class="social-icon"/>
-                </a>
-                <a href="https://link-to-twitter.com" target="_blank">
-                  <img src="/img/icon/kakao.png" alt="Kakao" class="social-icon"/>
-                </a>
+
+              <div slot="header" class="logo-container">
+                <img v-lazy="'img/now-logo.png'" alt="" />
               </div>
-            </div>
+
 
 
             <template slot="raw-content">
+
               <div class="card-footer text-center">
+                <h2>{{ name }}님, 환영합니다.</h2>
                 <a
-                    @click="loginWithGoogle"
-                    href="http://localhost:80/oauth2/authorization/google"
-                    class="btn btn-google btn-round btn-lg btn-block"
-                >구글 로그인</a
-                >
-              </div>
-              <div class="card-footer text-center">
-                <a
-                    href="#pablo"
-                    class="btn btn-naver btn-round btn-lg btn-block"
-                >네이버 로그인</a
-                >
-              </div>
-              <div class="card-footer text-center">
-                <a
-                    href="#pablo"
-                    class="btn btn-kakao btn-round btn-lg btn-block"
-                >카카오 로그인</a
-                >
-              </div>
-              <div class="card-footer text-center">
-                <a
-                    href="#pablo"
+                    href="/landing"
                     class="btn btn-primary btn-round btn-lg btn-block"
-                >로그인없이 시작</a
+                >홈으로 이동</a
                 >
               </div>
               <div class="pull-left">
@@ -72,6 +44,8 @@
 </template>
 <script>
 import {Card, Button, FormGroupInput} from '@/components';
+import {jwtDecode} from "jwt-decode";
+
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
@@ -82,20 +56,46 @@ export default {
   },
   data() {
     return {
+      name: '',
       error: null
     }
   },
-  computed: {
-    apiUrl() {
-      return process.env.VUE_APP_API_URL;
-    }
+  mounted() {
+    this.handleRedirect(); // 컴포넌트가 마운트될 때 URL 파라미터 처리
   },
   methods: {
-    loginWithGoogle() {
-      // 소셜 로그인 URL로 리다이렉트
-      window.location.href = `${this.apiUrl}/oauth2/authorization/google`;
-    },
-  }
+    handleRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      const accessToken = params.get('accessToken');
+      const refreshToken = params.get('refreshToken');
+
+      if (accessToken && refreshToken) {
+        // 토큰 저장 (예: localStorage에 저장)
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+
+        const decodedToken = jwtDecode(accessToken);
+
+        this.$store.commit('setUser', {
+          id: decodedToken.id,
+          email: decodedToken.email,
+          name : decodedToken.name,
+          token: accessToken,
+          tokenExpiration: decodedToken.exp,
+        });
+
+        this.name = decodedToken.name;
+
+        console.log("유저 정보 저장 완료. id :" + decodedToken.id);
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          console.log('Access Token:', token);
+        } else {
+          console.log('No Access Token found.');
+        }
+      }
+    }
+  },
 };
 </script>
 <style>
