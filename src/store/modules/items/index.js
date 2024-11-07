@@ -18,7 +18,8 @@ export default {
                     name: 'itemNameB',
                     price: 222
                 },
-            ]
+            ],
+            userTags: [],
         }
     },
     mutations,

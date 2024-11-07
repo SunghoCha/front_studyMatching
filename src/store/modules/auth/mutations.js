@@ -5,6 +5,9 @@ export default {
         state.name = payload.name;
         state.token = payload.token;
         state.tokenExpiration = payload.tokenExpiration;
+        state.refreshToken = payload.refreshToken;
+
+        //sessionStorage.setItem('user', JSON.stringify(payload))
     },
     clearUser(state) {
         state.id = null;
@@ -12,5 +15,6 @@ export default {
         state.name = null;
         state.token = null;
         state.tokenExpiration = null;
-    }
+        state.refreshToken = null;
+    },
 };

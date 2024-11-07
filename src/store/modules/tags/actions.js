@@ -33,16 +33,28 @@ export default {
     },
 
     async loadUserTags(context, userId) {
-        console.log("비동기 요청 보냄")
+        console.log("유저 태그목록 비동기 요청 보냄")
         const response = await fetch(`${apiUrl}/user-tag/${userId}`);
-        console.log("비동기 요청 데이터 반환 완료")
+        console.log("유저 태그목록 반환 완료")
         const responseData = await response.json();
 
         if (!response.ok) {
             console.log("유저 태그 목록 불러오기 실패")
             const error = new Error(responseData.message || '유저 태그 목록 반환 실패')
         }
-        console.log(responseData);
         context.commit('setUserTags', responseData);
     },
+
+    async loadAllTags(context) {
+        console.log("전체 태그목록 비동기 요청 보냄")
+        const response = await fetch(`${apiUrl}/tag`);
+        console.log("전체 태그 목록 반환 완료")
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            console.log("전체 태그 목록 불러오기 실패")
+            const error = new Error(responseData.message || '전체 태그 목록 반환 실패')
+        }
+        context.commit('setAllTags', responseData);
+    }
 };

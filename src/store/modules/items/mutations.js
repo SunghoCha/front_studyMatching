@@ -4,9 +4,13 @@ export default {
     // },
     setItems(state, payload) {
         state.items = payload;
-        localStorage.setItem('items', JSON.stringify(state.items));
+        //sessionStorage.setItem('items', JSON.stringify(state.items));
     },
     setFetchTimestamp(state) {
         state.lastFetch = new Date().getTime();
+    },
+    setUserTags(state, payload) {
+        state.userTags = payload;
+        //sessionStorage.setItem('userTags', JSON.stringify(state.userTags));
     }
 }

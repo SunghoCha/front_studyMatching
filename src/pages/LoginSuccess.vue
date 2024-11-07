@@ -9,10 +9,9 @@
         <div class="col-md-5 ml-auto mr-auto">
           <card type="login" plain>
 
-              <div slot="header" class="logo-container">
-                <img v-lazy="'img/now-logo.png'" alt="" />
-              </div>
-
+            <div slot="header" class="logo-container">
+              <img v-lazy="'img/now-logo.png'" alt=""/>
+            </div>
 
 
             <template slot="raw-content">
@@ -60,34 +59,36 @@ export default {
       error: null
     }
   },
-  mounted() {
+  created() {
     this.handleRedirect(); // 컴포넌트가 마운트될 때 URL 파라미터 처리
   },
   methods: {
     handleRedirect() {
+      console.log("토큰 저장 시작")
       const params = new URLSearchParams(window.location.search);
       const accessToken = params.get('accessToken');
       const refreshToken = params.get('refreshToken');
 
       if (accessToken && refreshToken) {
-        // 토큰 저장 (예: localStorage에 저장)
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
 
         const decodedToken = jwtDecode(accessToken);
+        console.log("id: " + decodedToken.id);
+        console.log("email: " + decodedToken.email);
+        console.log("name: " + decodedToken.name);
 
-        this.$store.commit('setUser', {
+        this.$store.commit('auth/setUser', {
           id: decodedToken.id,
           email: decodedToken.email,
-          name : decodedToken.name,
+          name: decodedToken.name,
           token: accessToken,
           tokenExpiration: decodedToken.exp,
+          refreshToken: refreshToken,
         });
 
-        this.name = decodedToken.name;
-
-        console.log("유저 정보 저장 완료. id :" + decodedToken.id);
-        const token = localStorage.getItem('accessToken');
+        //const user = JSON.parse(sessionStorage.getItem("user"));
+        console.log("유저 정보 저장 완료. id :" + this.$store.getters['auth/userId']);
+        //const token = sessionStorage.getItem('accessToken');
+        const token = this.$store.getters['auth/token'];
         if (token) {
           console.log('Access Token:', token);
         } else {

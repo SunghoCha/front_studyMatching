@@ -2,6 +2,9 @@ export default {
     items(state) {
         return state.items;
     },
+    userTags(state) {
+        return state.userTags;
+    },
     hasItems(state) {
         return state.items && state.items.length > 0;
     },
@@ -17,5 +20,5 @@ export default {
         }
         const currentTimeStamp = new Date().getTime();
         return (currentTimeStamp - lastFetch) / 1000 > 60;
-    }
+    },
 }

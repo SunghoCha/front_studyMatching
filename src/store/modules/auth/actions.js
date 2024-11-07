@@ -128,9 +128,9 @@ export default {
         }
     },
 
-    async editTag(context, payload) {
-        const accountId = payload.accountId;
-        const response = await fetch(`http://localhost:8080/tag/${accountId}`, {
+    async editTag(context, {payload, userId}) {
+        console.log("태그 수정 요청 전송 시작:" + userId);
+        const response = await fetch(`${apiUrl}/user-tag/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -139,29 +139,31 @@ export default {
                 tags: payload.tags
             })
         });
+        console.log("태그 수정 요청 전송 완료")
 
         const responseData = await response.json();
 
         if (!response.ok) {
             throw new Error(responseData.message || 'tag 등록에 실패하였습니다.')
         }
+        context.commit("")
+        return responseData.tag;
     },
     async loginWithGoogle() {
+        console.log("구글 로그인 요청")
         const response = await fetch(`${apiUrl}/oauth2/authorization/google`,)
-
-
+        
         const responseData = await response.json();
 
         if (!response.ok) {
             throw new Error(responseData.message || '로그인에 실패하였습니다.')
         }
 
-        // 토큰 저장 (예: localStorage에 저장)
         const accessToken = responseData.accessToken
         const refreshToken = responseData.refreshToken
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('refreshToken', refreshToken);
+        console.log("토큰 저장 완료")
         const decodedToken = jwtDecode(accessToken);
 
         commit('setUser', {
