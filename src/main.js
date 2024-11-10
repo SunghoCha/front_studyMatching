@@ -20,6 +20,7 @@ import App from './App.vue';
 import router from './router';
 import NowUiKit from './plugins/now-ui-kit';
 import store from './store';
+import '@toast-ui/editor/dist/toastui-editor.css';
 
 Vue.config.productionTip = false;
 

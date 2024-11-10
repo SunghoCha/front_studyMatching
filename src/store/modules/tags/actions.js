@@ -1,3 +1,5 @@
+import store from "@/store";
+
 const apiUrl = process.env.VUE_APP_API_URL;
 
 export default {
@@ -34,7 +36,15 @@ export default {
 
     async loadUserTags(context, userId) {
         console.log("유저 태그목록 비동기 요청 보냄")
-        const response = await fetch(`${apiUrl}/user-tag/${userId}`);
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/user-tag/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         console.log("유저 태그목록 반환 완료")
         const responseData = await response.json();
 
@@ -47,7 +57,15 @@ export default {
 
     async loadAllTags(context) {
         console.log("전체 태그목록 비동기 요청 보냄")
-        const response = await fetch(`${apiUrl}/tag`);
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/tag`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         console.log("전체 태그 목록 반환 완료")
         const responseData = await response.json();
 
