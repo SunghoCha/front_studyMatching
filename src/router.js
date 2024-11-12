@@ -7,11 +7,11 @@ import Landing from "@/pages/Landing.vue";
 import LoginSuccess from "@/pages/LoginSuccess.vue";
 import Profile from "@/pages/Profile.vue";
 import editTagForm from "@/pages/EditTagForm.vue";
-import store from "@/store";
 import editZoneForm from "@/pages/EditZoneForm.vue";
-import studyForm from "@/pages/components/StudyForm.vue";
-import studyForm2 from "@/pages/StudyForm2.vue";
-import studyForm3 from "@/pages/StudyForm3.vue";
+import studyForm from "@/pages/StudyForm.vue";
+import studyInfo from "@/pages/StudyInfo.vue";
+import studyInfo2 from "@/pages/StudyInfo2.vue";
+
 
 Vue.use(Router);
 
@@ -76,23 +76,21 @@ const router = new Router({
       name: 'StudyForm',
       components: { default: studyForm, header: MainNavbar, footer: MainFooter },
       props: {
-        header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }
       }
     },
     {
-      path: '/study2',
-      name: 'StudyForm2',
-      components: { default: studyForm2, header: MainNavbar, footer: MainFooter },
+      path: '/study-info',
+      name: 'StudyInfo',
+      components: { default: studyInfo, header: MainNavbar, footer: MainFooter },
       props: {
-        header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }
       }
     },
     {
-      path: '/study3',
-      name: 'StudyForm3',
-      components: { default: studyForm3, header: MainNavbar, footer: MainFooter },
+      path: '/study-info2',
+      name: 'StudyInfo2',
+      components: { default: studyInfo2, header: MainNavbar, footer: MainFooter },
       props: {
         footer: { backgroundColor: 'black' }
       }

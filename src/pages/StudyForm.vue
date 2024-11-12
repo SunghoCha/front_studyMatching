@@ -109,10 +109,6 @@ export default {
       errors: {}
     };
   },
-  mounted() {
-    const editorElement = this.$refs.fullDescriptionEditor.$el;
-    editorElement.style.height = '400px'; // 원하는 높이로 설정
-  },
   methods: {
     async handleSubmit() {
       try {
@@ -129,6 +125,7 @@ export default {
 </script>
 
 <style scoped>
+
 .page-header {
   min-height: 100vh;
   overflow: auto;
