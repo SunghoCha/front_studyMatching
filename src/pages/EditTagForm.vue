@@ -100,20 +100,18 @@ export default {
         await this.$store.dispatch('tags/loadUserTags', this.userId)
       } catch (error) {
         this.error = error.message || '유저 태그 목록을 불러오는데 실패했습니다.';
-      } finally {
-        this.tags = this.userTags;
-        console.log("유저태그 설정 완료 " + this.userTags);
       }
-    } ,
+      this.tags = this.userTags;
+      console.log("유저태그 설정 완료 " + this.userTags);
+    },
     async fetchAllTags() {
       try {
         await this.$store.dispatch('tags/loadAllTags')
       } catch (error) {
         this.error = error.message || '전체 태그 목록을 불러오는데 실패했습니다.'
-      } finally {
-        this.availableTags = this.allTags
-        console.log("전체태그 설정 완료 " + this.allTags);
       }
+      this.availableTags = this.allTags
+      console.log("전체태그 설정 완료 " + this.allTags);
     },
     onInput() {
       const searchTerm = this.inputValue.toLowerCase();
@@ -136,7 +134,7 @@ export default {
       console.log("전송할 태그목록: " + formData.tags);
       try {
         console.log("editTag 호출 전");
-        const updatedTags = await this.$store.dispatch('auth/editTag', { payload: formData, userId: this.userId});
+        const updatedTags = await this.$store.dispatch('tags/editTag', {payload: formData, userId: this.userId});
         console.log("editTag 호출 후");
         this.tags = updatedTags;
       } catch (err) {

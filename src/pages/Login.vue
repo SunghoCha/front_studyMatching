@@ -26,22 +26,21 @@
             <template slot="raw-content">
               <div class="card-footer text-center">
                 <a
-                    @click="loginWithGoogle"
-                    href="http://localhost:80/oauth2/authorization/google"
+                    @click.prevent="loginWithProvider('google')"
                     class="btn btn-google btn-round btn-lg btn-block"
                 >구글 로그인</a
                 >
               </div>
               <div class="card-footer text-center">
                 <a
-                    href="#pablo"
+                    @click.prevent="loginWithProvider('naver')"
                     class="btn btn-naver btn-round btn-lg btn-block"
                 >네이버 로그인</a
                 >
               </div>
               <div class="card-footer text-center">
                 <a
-                    href="#pablo"
+                    @click.prevent="loginWithProvider('kakao')"
                     class="btn btn-kakao btn-round btn-lg btn-block"
                 >카카오 로그인</a
                 >
@@ -82,6 +81,11 @@ export default {
   },
   data() {
     return {
+      socialLoginUrls: {
+        google: `${process.env.VUE_APP_API_URL}/oauth2/authorization/google`,
+        naver: `${process.env.VUE_APP_API_URL}/oauth2/authorization/naver`,
+        kakao: `${process.env.VUE_APP_API_URL}/oauth2/authorization/kakao`,
+      },
       error: null
     }
   },
@@ -91,10 +95,17 @@ export default {
     }
   },
   methods: {
-    loginWithGoogle() {
-      // 소셜 로그인 URL로 리다이렉트
-      window.location.href = `${this.apiUrl}/oauth2/authorization/google`;
+    loginWithProvider(provider) {
+      const url = this.socialLoginUrls[provider];
+      if (!url) {
+        console.error("유효하지 않은 provider");
+        return;
+      }
+      window.location.href = url;
     },
+    startWithoutLogin() {
+      this.$router.push('/home');
+    }
   }
 };
 </script>
@@ -137,4 +148,7 @@ export default {
   background-color: #ffeb3b !important; /* 노란색 */
   color: black !important; /* 글자 색상 */
 }
+
+
+
 </style>

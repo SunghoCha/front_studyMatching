@@ -45,7 +45,7 @@ export default {
   props: {
     currentMenu: {
       type: String,
-      required: true
+      default: 'description'
     }
   },
   data() {

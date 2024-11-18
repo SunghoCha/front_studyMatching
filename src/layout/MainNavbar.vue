@@ -7,9 +7,15 @@
     menu-classes="ml-auto"
   >
     <template>
-      <router-link v-popover:popover1 class="navbar-brand" to="/">
-        Now Ui Kit
-      </router-link>
+      <n-button
+          tag="button"
+          type="link"
+          class="navbar-brand"
+          @click="handleLoginLogout"
+      >
+        <span class="custom-login-text" v-if="!isLoggedIn">로그인</span>
+        <span class="custom-login-text" v-else>{{ userName }}님,&nbsp;&nbsp;로그아웃</span>
+      </n-button>
       <el-popover
         ref="popover1"
         popper-class="popover"
@@ -123,6 +129,7 @@
 <script>
 import { DropDown, Navbar, NavLink } from '@/components';
 import { Popover } from 'element-ui';
+import NButton from "@/components/Button.vue";
 export default {
   name: 'main-navbar',
   props: {
@@ -130,12 +137,36 @@ export default {
     colorOnScroll: Number
   },
   components: {
+    NButton,
     DropDown,
     Navbar,
     NavLink,
     [Popover.name]: Popover
-  }
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters["auth/isLoggedIn"];
+    },
+    userName() {
+      return this.$store.getters["auth/userName"];
+    },
+  },
+  methods: {
+    handleLoginLogout() {
+      if (this.isLoggedIn) {
+        this.$store.commit("auth/clearUser");
+        this.$router.push("/login");
+      } else {
+        this.$router.push("/login");
+      }
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-login-text {
+  color: white; /* 텍스트 색상 흰색 */
+}
+
+</style>

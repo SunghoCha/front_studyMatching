@@ -16,6 +16,7 @@ export default {
             }
         });
         console.log("유저 지역 목록 반환 완료")
+
         const responseData = await response.json();
 
         if (!response.ok) {

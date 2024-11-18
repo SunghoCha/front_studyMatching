@@ -4,34 +4,29 @@ const apiUrl = process.env.VUE_APP_API_URL;
 
 export default {
 
-    // 기본 GET 방식
-    async loadItems(context) {
+    async editTag(context, {payload, userId}) {
+        const accessToken = store.getters['auth/token'];
+        console.log("태그 수정 요청 전송 시작:" + userId);
+        // TODO 해당유저만 접근가능한 기능이니 userId를 url에 쓸 필요 없지 않을까?
+        const response = await fetch(`${apiUrl}/user-tag/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tags: payload.tags
+            })
+        });
+        console.log("태그 수정 요청 전송 완료")
 
-        const response = await fetch(
-            `http://localhost:8080/api/items`
-        );
         const responseData = await response.json();
 
         if (!response.ok) {
-            console.log("Get 요청 실패");
-            const error = new Error(responseData.message || 'Failed to fetch!');
-            throw error;
+            throw new Error(responseData.message || 'tag 등록에 실패하였습니다.')
         }
-
-        const items = [];
-
-        for (const key in responseData) {
-            const item = {
-                id: responseData[key].id,
-                name: responseData[key].name,
-                price: responseData[key].price,
-                imgPath: responseData[key].imgPath,
-                discountPer: responseData[key].discountPer
-            }
-            items.push(item);
-        }
-        context.commit('setItems', items);
-        context.commit('setFetchTimestamp');
+        context.commit("")
+        return responseData.tag;
     },
 
     async loadUserTags(context, userId) {

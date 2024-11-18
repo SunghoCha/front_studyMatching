@@ -69,13 +69,30 @@ export default {
       const accessToken = params.get('accessToken');
       const refreshToken = params.get('refreshToken');
 
-      if (accessToken && refreshToken) {
+      if (!accessToken || !refreshToken) {
+        this.clearAuthState();
+        this.error = "유효하지 않은 로그인 요청입니다.";
+        console.error(this.error);
+        this.$router.push("login");
+        return;
+      }
 
+      try {
         const decodedToken = jwtDecode(accessToken);
+
+        if (decodedToken.exp * 1000 < Date.now()) {
+          this.clearAuthState();
+          this.error = "로그인 세션이 만료되었습니다. 다시 로그인해주세요.";
+          console.error(this.error);
+          this.$router.push("/login");
+          return;
+        }
+
         console.log("id: " + decodedToken.id);
         console.log("email: " + decodedToken.email);
         console.log("name: " + decodedToken.name);
 
+        this.name = decodedToken.name;
         this.$store.commit('auth/setUser', {
           id: decodedToken.id,
           email: decodedToken.email,
@@ -85,57 +102,24 @@ export default {
           refreshToken: refreshToken,
         });
 
-        //const user = JSON.parse(sessionStorage.getItem("user"));
         console.log("유저 정보 저장 완료. id :" + this.$store.getters['auth/userId']);
-        //const token = sessionStorage.getItem('accessToken');
-        const token = this.$store.getters['auth/token'];
-        if (token) {
-          console.log('Access Token:', token);
-        } else {
-          console.log('No Access Token found.');
-        }
+        // URL에서 토큰 파라미터 제거
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+
+      } catch (error) {
+        this.error = "토큰 처리 중 오류가 발생했습니다.";
+        console.error(this.error);
+        this.$router.push('/login');
       }
+    },
+    clearAuthState() {
+      console.log("저장된 사용자 정보 초기화");
+      this.$store.commit('auth/clearUser');
     }
   },
 };
 </script>
 <style>
 
-
-.social-icons {
-  display: flex; /* 가로 배열 */
-  justify-content: center; /* 가운데 정렬 */
-  margin-top: 10px; /* 상단 여백 */
-}
-
-.social-icons a {
-  display: inline-block; /* a태그를 inline-block으로 설정 */
-  margin: 10px 25px; /* 아이콘 간격 (좌우 여백을 15px로 설정) */
-}
-
-.social-icon {
-  width: 40px; /* 원하는 아이콘 너비 */
-  height: 40px; /* 원하는 아이콘 높이 */
-  object-fit: contain; /* 비율 유지 */
-}
-
-/* 버튼 색상 스타일 */
-.btn-google {
-  background-color: white !important; /* 흰색 */
-  color: blue !important; /* 글자 색상 */
-}
-
-.btn.btn-google {
-  color: blue !important; /* 버튼 클래스와 함께 사용 */
-}
-
-.btn-naver {
-  background-color: green !important; /* 녹색 */
-  color: white !important; /* 글자 색상 */
-}
-
-.btn-kakao {
-  background-color: #ffeb3b !important; /* 노란색 */
-  color: black !important; /* 글자 색상 */
-}
 </style>
