@@ -30,8 +30,13 @@
                         <hr class="my-4">
 
                         <div class="zones-list">
-                          <span v-for="(zone, index) in zones" :key="index" class="zone">
-                            {{ zone.city + " : " + zone.localName + " : " + zone.province }} <button @click="removeZone(index)">x</button>
+                          <span
+                              v-for="(zone, index) in zones"
+                              :key="index"
+                              class="zone"
+                          >
+                            {{ zone.displayName }}
+                            <button @click="removeZone(index)">x</button>
                           </span>
                         </div>
 
@@ -42,13 +47,19 @@
                               class="suggestion"
                               @click="addZone(suggestion)"
                           >
-                            {{ suggestion }}
+                            {{ suggestion.displayName }}
                           </div>
                         </div>
                       </div>
                     </div>
                     <div class="col-sm-4">
-                      <button type="button" class="btn btn-primary btn-custom" @click="submitForm">수정 완료</button>
+                      <button
+                          type="button"
+                          class="btn btn-primary btn-custom"
+                          @click="submitForm"
+                      >
+                        수정 완료
+                      </button>
                     </div>
                     <hr class="my-4">
                   </div>
@@ -62,14 +73,15 @@
   </div>
 </template>
 
+
 <script>
-import {Card} from "@/components";
+import { Card } from "@/components";
 
 export default {
-  components: {Card},
+  components: { Card },
   data() {
     return {
-      inputValue: '',
+      inputValue: "",
       zones: [],
       availableZones: [],
       suggestions: [],
@@ -84,45 +96,56 @@ export default {
   },
   computed: {
     userId() {
-      return this.$store.getters['auth/userId'];
+      return this.$store.getters["auth/userId"];
     },
     userZones() {
-      return this.$store.getters['zones/userZones']
+      return this.$store.getters["zones/userZones"];
     },
     allZones() {
-      return this.$store.getters['zones/allZones']
-    }
+      return this.$store.getters["zones/allZones"];
+    },
   },
   methods: {
     async fetchUserZones() {
       try {
-        await this.$store.dispatch('zones/loadUserZones', this.userId)
+        await this.$store.dispatch("zones/loadUserZones", this.userId);
+        this.zones = this.userZones.map((zone) => ({
+          localName: zone.localName,
+          province: zone.province,
+          displayName: `${zone.localName} (${zone.province})`,
+        }));
+        console.log("유저 지역 설정 완료", this.zones);
       } catch (error) {
-        this.error = error.message || '유저 지역 목록을 불러오는데 실패했습니다.';
-      } finally {
-        this.zones = this.userZones;
-        console.log("유저지역 설정 완료 " + this.zones.id);
+        this.error = error.message || "유저 지역 목록을 불러오는데 실패했습니다.";
       }
     },
     async fetchAllZones() {
       try {
-        await this.$store.dispatch('zones/loadAllZones')
+        await this.$store.dispatch("zones/loadAllZones");
+        this.availableZones = this.allZones.map(zone => ({
+          localName: zone.localName,
+          province: zone.province,
+          displayName: zone.province === "none"
+              ? `${zone.localName}` // province가 "none"이면 localName만 표시
+              : `${zone.localName} (${zone.province})` // 그렇지 않으면 전체 표시
+        }));
+        console.log("전체 지역 설정 완료", this.availableZones);
       } catch (error) {
-        this.error = error.message || '전체 지역 목록을 불러오는데 실패했습니다.'
-      } finally {
-        this.availableZones = this.allZones
-        console.log("전체지역 설정 완료 " + this.allZones);
+        this.error = error.message || "전체 지역 목록을 불러오는데 실패했습니다.";
+        this.availableZones = [];
       }
     },
     onInput() {
       const searchTerm = this.inputValue.toLowerCase();
-      this.suggestions = this.availableZones.filter(zone => zone.localName.includes(searchTerm));
+      this.suggestions = this.availableZones.filter((zone) =>
+          zone.displayName.toLowerCase().includes(searchTerm)
+      );
     },
     addZone(zone) {
-      if (!this.zones.includes(zone)) {
+      if (!this.zones.some((existingZone) => existingZone.displayName === zone.displayName)) {
         this.zones.push(zone);
       }
-      this.inputValue = ''; // 입력값 초기화
+      this.inputValue = ""; // 입력값 초기화
       this.suggestions = []; // 제안 초기화
     },
     removeZone(index) {
@@ -130,21 +153,33 @@ export default {
     },
     async submitForm() {
       const formData = {
-        zones: this.zones
-      }
-      console.log("전송할 지역목록: " + formData.zones);
+        zones: this.zones.map((zone) => ({
+          localName: zone.localName,
+          province: zone.province,
+        })),
+      };
+
+      console.log("전송할 지역 목록:", formData.zones);
       try {
-        console.log("editZone 호출 전");
-        const updatedZones = await this.$store.dispatch('auth/editZone', {payload: formData, userId: this.userId});
-        console.log("editZone 호출 후");
-        this.zones = updatedZones;
+        const updatedZones = await this.$store.dispatch("zones/editZone", {
+          payload: formData,
+          userId: this.userId,
+        });
+
+        this.zones = updatedZones.map((zone) => ({
+          localName: zone.localName,
+          province: zone.province,
+          displayName: `${zone.localName} (${zone.province})`,
+        }));
+        console.log("수정 완료:", this.zones);
       } catch (err) {
-        this.error = err.message || "zone 등록 실패"
+        this.error = err.message || "zone 등록 실패";
       }
-    }
+    },
   },
 };
 </script>
+
 
 <style scoped>
 .zones-list {
@@ -187,3 +222,4 @@ export default {
   background-color: #f0f0f0;
 }
 </style>
+

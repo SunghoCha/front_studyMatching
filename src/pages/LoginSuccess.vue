@@ -68,6 +68,7 @@ export default {
       const params = new URLSearchParams(window.location.search);
       const accessToken = params.get('accessToken');
       const refreshToken = params.get('refreshToken');
+      console.log("accessToken: " + accessToken);
 
       if (!accessToken || !refreshToken) {
         this.clearAuthState();

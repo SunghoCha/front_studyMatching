@@ -45,5 +45,30 @@ export default {
             const error = new Error(responseData.message || '전체 지역 목록 반환 실패')
         }
         context.commit('setAllZones', responseData);
-    }
+    },
+
+    async editZone(context, {payload, userId}) {
+        console.log("지역 수정 요청 전송 시작:" + userId);
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/user-tag/`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                zones: payload.zones
+            })
+        });
+        console.log("지역 수정 요청 전송 완료")
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.message || 'zone 등록에 실패하였습니다.')
+        }
+        context.commit("")
+        return responseData.zone;
+    },
 };

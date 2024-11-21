@@ -1,9 +1,12 @@
 export default {
-    // 유저가 가입한 모든 스터디 목록을 반환
+    // 모든 스터디 목록을 반환
     studyList(state) {
         return state.studyList;
     },
-
+    // 페이지 정보 반환
+    paginationInfo(state) {
+        return state.paginationInfo;
+    },
     // 현재 선택된 스터디의 상세 데이터를 반환
     currentStudy(state) {
         if (!state.currentStudy) {

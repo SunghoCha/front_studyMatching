@@ -9,6 +9,20 @@ export default {
         state.studyList = [];
     },
 
+    // 페이지정보 저장
+    setPaginationInfo(state, paginationInfo) {
+      state.paginationInfo = paginationInfo;
+    },
+    // 페이지정보 초기화
+    clearPaginationInfo(state) {
+      state.paginationInfo = {
+          currentPage: 1,
+          totalPages: 0,
+          totalCount: 0,
+          size: 0,
+      }
+    },
+
     // 현재 선택된 스터디 상세 데이터 저장
     setCurrentStudy(state, studyData) {
         if (!studyData || typeof studyData !== 'object' || !studyData.path) {

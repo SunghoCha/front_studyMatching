@@ -1,42 +1,15 @@
 <template>
-  <div class="list-group">
-    <div  class="sidebar">
+  <div v-if="visible" class="settings-submenu">
     <a
+        v-for="(menu, key) in menus"
+        :key="key"
         class="list-group-item list-group-item-action"
-        :class="{ active: currentMenu === 'description' }"
-        :href="`/study/${study.path}/settings/description`"
+        :class="{ active: currentMenu === key }"
+        href="#"
+        @click.prevent="$emit('menu-selected', key)"
     >
-      <i class="now-ui-icons design_app"></i> 소개
+      <i :class="menu.icon"></i> {{ menu.label }}
     </a>
-    <a
-        class="list-group-item list-group-item-action"
-        :class="{ active: currentMenu === 'image' }"
-        :href="`/study/${study.path}/settings/banner`"
-    >
-      <i class="now-ui-icons media-1_photo"></i> 배너 이미지
-    </a>
-    <a
-        class="list-group-item list-group-item-action"
-        :class="{ active: currentMenu === 'tags' }"
-        :href="`/study/${study.path}/settings/tags`"
-    >
-      <i class="now-ui-icons design_bullet-list-67"></i> 스터디 주제
-    </a>
-    <a
-        class="list-group-item list-group-item-action"
-        :class="{ active: currentMenu === 'zones' }"
-        :href="`/study/${study.path}/settings/zones`"
-    >
-      <i class="now-ui-icons location_pin"></i> 활동 지역
-    </a>
-    <a
-        class="list-group-item list-group-item-action list-group-item-danger"
-        :class="{ active: currentMenu === 'study' }"
-        :href="`/study/${study.path}/settings/study`"
-    >
-      <i class="now-ui-icons business_chart-pie-36"></i> 스터디
-    </a>
-    </div>
   </div>
 </template>
 
@@ -46,38 +19,35 @@ export default {
     currentMenu: {
       type: String,
       default: 'description'
-    }
+    },
+    visible: {
+      type: Boolean,
+      default: true, // 설정 탭에서만 표시
+    },
   },
   data() {
     return {
-      study: {
-        path: 'example-study' // 실제 데이터는 필요에 따라 동적으로 설정
-      }
+      menus: {
+        description: {label: "소개", icon: "fa fa-info-circle"},
+        image: {label: "배너 이미지", icon: "fa fa-image"},
+        tags: {label: "스터디 주제", icon: "fa fa-tags"},
+        zones: {label: "활동 지역", icon: "fa fa-map-marker-alt"},
+        study: {label: "스터디 설정", icon: "fa fa-cogs"},
+      },
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
-.sidebar {
-  position: fixed;
-  top: 10vh; /* 화면 높이의 10%만큼 떨어지게 설정 */
-  left: 5vw; /* 화면 너비의 5%만큼 떨어지게 설정 */
-  height: calc(100% - 10vh); /* 사이드바 높이를 상단 10% 제외하고 설정 */
-  width: 250px; /* 고정된 사이드바 너비 */
-  background-color: transparent;
-  overflow-y: auto;
-  transition: top 0.3s ease-in-out, left 0.3s ease-in-out; /* 위치 조정 시 부드럽게 이동 */
-}
-
-/* 작은 화면에서 사이드바 숨기기 */
-@media (max-width: 768px) {
-  .sidebar {
-    left: 0; /* 사이드바를 화면 왼쪽으로 배치 */
-    width: 100%; /* 사이드바 크기를 화면 크기에 맞게 100%로 설정 */
-    top: 0;
-    height: 100%;
-  }
+.settings-submenu {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .list-group-item {
@@ -86,11 +56,12 @@ export default {
   font-weight: 500;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .list-group-item i {
   margin-right: 0.5rem;
-  color: #ff9800; /* 아이콘 색상 (네비게이션 바와 동일) */
+  color: #007bff; /* 아이콘 색상 */
 }
 
 .list-group-item:hover {
@@ -100,9 +71,5 @@ export default {
 .list-group-item.active {
   background-color: #007bff; /* 활성화된 항목 색상 */
   color: white;
-}
-
-.list-group-item-danger.active {
-  background-color: #e53935; /* '스터디' 항목의 활성화 색상 */
 }
 </style>

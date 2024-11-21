@@ -10,9 +10,8 @@ import editTagForm from "@/pages/EditTagForm.vue";
 import editZoneForm from "@/pages/EditZoneForm.vue";
 import studyForm from "@/pages/StudyForm.vue";
 import studyInfo from "@/pages/StudyInfo.vue";
-import studyInfo3 from "@/pages/StudyInfo3.vue";
+import studyInfo2 from "@/pages/StudyInfo2.vue";
 import studyList from "@/pages/StudyList.vue";
-
 
 
 Vue.use(Router);
@@ -82,7 +81,7 @@ const router = new Router({
       }
     },
     {
-      path: '/study-info',
+      path: '/study-info/:path',
       name: 'StudyInfo',
       components: { default: studyInfo, header: MainNavbar, footer: MainFooter },
       props: {
@@ -90,9 +89,9 @@ const router = new Router({
       }
     },
     {
-      path: '/study-info3',
-      name: 'StudyInfo3',
-      components: { default: studyInfo3, header: MainNavbar, footer: MainFooter },
+      path: '/study-info2',
+      name: 'StudyInfo2',
+      components: { default: studyInfo2, header: MainNavbar, footer: MainFooter },
       props: {
         footer: { backgroundColor: 'black' }
       }

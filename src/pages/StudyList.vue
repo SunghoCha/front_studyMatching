@@ -9,9 +9,19 @@
                 :description="study.shortDescription"
                 customClass="custom-card-style custom-card-bg"
             >
+              <!-- 태그 렌더링 -->
+              <div class="tags">
+                <span
+                    v-for="(tag, index) in study.tags"
+                    :key="index"
+                    class="tag"
+                >
+                  {{ tag.tag }}
+                </span>
+              </div>
               <template #footer>
                 <router-link
-                    :to="`/study/${study.path}`"
+                    :to="`/study-info/${study.path}`"
                     class="btn btn-primary view-details"
                 >
                   View Details
@@ -20,6 +30,16 @@
             </card>
           </div>
         </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+          <button @click="goToPage(1)" :disabled="paginationInfo.currentPage === 1">First</button>
+          <button @click="goToPage(paginationInfo.currentPage - 1)" :disabled="paginationInfo.currentPage === 1">Prev</button>
+          <span>Page {{ paginationInfo.currentPage }} of {{ paginationInfo.totalPages }}</span>
+          <button @click="goToPage(paginationInfo.currentPage + 1)" :disabled="paginationInfo.currentPage === paginationInfo.totalPages">Next</button>
+          <button @click="goToPage(paginationInfo.totalPages)" :disabled="paginationInfo.currentPage === paginationInfo.totalPages">Last</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -35,16 +55,31 @@ export default {
   data() {
     return {
       studyList: [],
+      paginationInfo: {
+        currentPage: 1,
+        totalPages: 0,
+        totalCount: 0,
+        size: 0,
+      },
     };
   },
   async mounted() {
-    try {
-      const studies = await this.$store.dispatch("studies/loadStudies");
-      this.studyList = studies;
-    } catch (error) {
-      console.error("스터디 목록 로드 실패:", error);
-    }
+    await this.loadStudies(1);
   },
+  methods: {
+    async loadStudies(page) {
+      try {
+        const { studyList, paginationInfo } = await this.$store.dispatch("studies/loadStudies", page - 1 );
+        this.studyList = studyList;
+        this.paginationInfo = paginationInfo;
+      } catch (error) {
+        console.error("스터디 목록 로드 실패:", error);
+      }
+    },
+    goToPage(page) {
+      this.loadStudies(page);
+    }
+  }
 };
 </script>
 
@@ -108,5 +143,22 @@ export default {
   position: absolute; /* 버튼을 절대 위치로 배치 */
   bottom: 16px; /* 카드의 하단에 위치 */
   right: 16px; /* 카드의 오른쪽에 위치 */
+}
+
+.tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* 태그 간 간격 */
+}
+
+.tag {
+  background-color: #f0f0f0; /* 태그 배경색 */
+  color: #333; /* 태그 글자색 */
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  display: inline-block;
+  white-space: nowrap;
 }
 </style>

@@ -1,6 +1,6 @@
 module.exports = {
   devServer: {
-    port: 8082 // 원하는 포트 번호로 설정
+    port: process.env.VUE_APP_PORT || 8080,
   },
   css: {
     // Enable CSS source maps.

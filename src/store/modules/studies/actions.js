@@ -54,11 +54,14 @@ export default {
 
         return responseData;
     },
-    async loadStudies(context, path) {
+    async loadStudies(context, page) {
         console.log("전체 스터디 목록 요청");
         const accessToken = store.getters['auth/token'];
 
-        const response = await fetch(`${apiUrl}/study/list`, {
+        context.commit('clearStudyList');
+        context.commit('clearPaginationInfo');
+
+        const response = await fetch(`${apiUrl}/study/list?page=${page}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -73,9 +76,23 @@ export default {
             const error = new Error(responseData.message || `스터디 목록 반환 실패`)
             throw error;
         }
-        context.commit('setStudyList', responseData);
-        console.log("스터디 목록:" + responseData);
+        const studyList = responseData.content;
+        const paginationInfo = {
+            currentPage: responseData.currentPage,
+            totalPages: responseData.totalPages,
+            totalCount: responseData.totalCount,
+            size: responseData.size
+        }
+        context.commit('setStudyList', studyList);
+        context.commit('setPaginationInfo', paginationInfo);
+        // 상세 출력 TODO : 삭제 예정 로그
+        console.log("스터디 목록 상세 정보 (JSON):", JSON.stringify(responseData, null, 2));
 
-        return responseData;
+        console.dir(responseData, { depth: null });
+        studyList.forEach((study, index) => {
+            console.log(`스터디 ${index + 1}:`, study.tags);
+        });
+
+        return { studyList, paginationInfo };
     },
 }

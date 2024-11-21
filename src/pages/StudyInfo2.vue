@@ -3,9 +3,13 @@
     <div class="content">
       <div class="container">
         <div class="row">
+          <!-- Sidebar Column -->
+          <div class="col-md-2">
+            <StudySidebar :currentMenu="studyMenu" />
+          </div>
 
-         <!-- Main Content Column -->
-          <div class="col-md-12">
+          <!-- Main Content Column -->
+          <div class="col-md-10">
             <div class="study-info">
               <!-- Study Info Header -->
               <div class="row pt-4 text-left justify-content-center">
@@ -19,6 +23,7 @@
                   <!-- Buttons for DRAFT, CLOSED, OFF, Join/Leave -->
                 </div>
               </div>
+
               <!-- Study Short Description -->
               <div class="row justify-content-center">
                 <div class="col-10">
@@ -49,7 +54,11 @@
             </div>
 
             <!-- Study Menu Tabs Component -->
-            <study-menu2 :study="study" :loading="!study.path"></study-menu2>
+            <study-menu :study="study" :studyMenu="studyMenu" :isAuthenticated="isAuthenticated" :currentUser="currentUser"></study-menu>
+
+            <div class="row px-3 justify-content-center">
+              <div class="col-10 pt-3">{{ study.fullDescription }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -58,41 +67,42 @@
 </template>
 
 <script>
-import StudyMenu2 from "@/pages/StudyMenu2.vue";
+import StudyMenu from './StudyMenu3.vue';
+import StudySidebar from "@/pages/StudySidebar.vue";
 
 export default {
   components: {
-    StudyMenu2,
+    StudyMenu,StudySidebar
   },
   data() {
     return {
-      study: {},
+      study: {
+        path: 'example-study',
+        title: '예시 스터디 제목1',
+        published: false,
+        closed: false,
+        recruiting: true,
+        shortDescription: '이 스터디는 예시입니다.',
+        fullDescription: "스터디 관련 긴 글입니다.",
+        tags: [{ title: '프로그래밍' }, { title: '자기개발' }],
+        zones: [{ id: 1, localNameOfCity: '서울' }],
+        members: [1, 2, 3],
+        isJoinable: (user) => true, // 임시 함수
+        isMember: (user) => true, // 임시 함수
+        isManager: (user) => true // 임시 함수
+      },
+      studyMenu: 'info', // 현재 선택된 메뉴
+      isAuthenticated: true, // 로그인 상태 (임시 값)
+      currentUser: { id: 1, name: 'user1' } // 현재 사용자 정보 (임시 값)
     };
-  },
-  mounted() {
-    this.loadStudyData();
-  },
-  methods: {
-    async loadStudyData() {
-      try {
-        const path = this.$route.params.path;
-        this.study = await this.$store.dispatch("studies/loadStudy", path);
-        console.log("study 정보: " + this.study);
-      } catch (error) {
-        console.error("스터디 데이터를 로드하는 중 오류 발생:", error);
-      }
-    },
-  },
+  }
 };
 </script>
-
-
 <style scoped>
 .study-info .h2 {
   color: white;
 
 }
-
 .study-info .col-6 {
   margin-bottom: 30px;
 }
