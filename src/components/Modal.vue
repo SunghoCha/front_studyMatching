@@ -29,7 +29,7 @@
                   data-dismiss="modal"
                   :aria-hidden="!show"
                 >
-                  <i class="now-ui-icons ui-1_simple-remove"></i>
+<!--                  <i class="now-ui-icons ui-1_simple-remove"></i>-->
                 </button>
               </slot>
               <slot name="header"></slot>

@@ -19,7 +19,7 @@
               <div class="card-footer text-center">
                 <h2>{{ name }}님, 환영합니다.</h2>
                 <a
-                    href="/landing"
+                    href="/study-list"
                     class="btn btn-primary btn-round btn-lg btn-block"
                 >홈으로 이동</a
                 >
@@ -108,12 +108,15 @@ export default {
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
 
+
       } catch (error) {
         this.error = "토큰 처리 중 오류가 발생했습니다.";
         console.error(this.error);
         this.$router.push('/login');
       }
     },
+
+
     clearAuthState() {
       console.log("저장된 사용자 정보 초기화");
       this.$store.commit('auth/clearUser');

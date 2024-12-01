@@ -5,7 +5,7 @@
       <div class="content">
         <div class="container">
           <div class="py-5 text-center">
-            <h2>스터디 모임 만들기</h2>
+            <h2>스터디 소개 수정하기</h2>
           </div>
           <div class="col-md-10 ml-auto mr-auto">
             <card plain>
@@ -22,11 +22,11 @@
                       required
                       minlength="2"
                       maxlength="20"
+                      disabled
                   />
-                  <small id="pathHelp" class="form-text text-muted">
-                    공백없이 문자, 숫자, 대시(-)와 언더바(_)만 2자 이상 20자 이내로 입력하세요. 스터디 홈 주소에 사용합니다. 예) /study/<b>study-path</b>
+                  <small id="pathHelp" class="form-text text-muted small-text">
+                    스터디 홈 주소는 설정에서 수정할 수 있습니다.
                   </small>
-                  <small v-if="errors.path" class="form-text text-danger">{{ errors.path }}</small>
                 </div>
 
                 <!-- 스터디 이름 -->
@@ -40,11 +40,12 @@
                       placeholder="스터디 이름"
                       required
                       maxlength="50"
+                      disabled
                   />
-                  <small id="titleHelp" class="form-text text-muted">
-                    스터디 이름을 50자 이내로 입력하세요.
+                  <small id="titleHelp" class="form-text text-muted small-text">
+                    스터디 이름은 설정에서 수정할 수 있습니다.
                   </small>
-                  <small v-if="errors.title" class="form-text text-danger">{{ errors.title }}</small>
+                  <small v-if="errors.title" class="form-text text-danger small-text">{{ errors.title }}</small>
                 </div>
 
                 <!-- 짧은 소개 -->
@@ -58,10 +59,12 @@
                       required
                       maxlength="100"
                   ></textarea>
-                  <small id="shortDescriptionHelp" class="form-text text-muted">
+                  <small id="shortDescriptionHelp" class="form-text text-muted small-text">
                     100자 이내로 스터디를 짧게 소개해 주세요.
                   </small>
-                  <small v-if="errors.shortDescription" class="form-text text-danger">{{ errors.shortDescription }}</small>
+                  <small v-if="errors.shortDescription" class="form-text text-danger">{{
+                      errors.shortDescription
+                    }}</small>
                 </div>
 
                 <div class="form-group" style="height: 100%; overflow-y: auto;">
@@ -73,14 +76,16 @@
                       initialEditType="markdown"
                       previewStyle="vertical"
                   ></editor>
-                  <small id="fullDescriptionHelp" class="form-text text-muted">
+                  <small id="fullDescriptionHelp" class="form-text text-muted small-text">
                     스터디의 목표, 일정, 진행 방식, 사용할 교재 또는 인터넷 강좌 그리고 모집중인 스터디원 등 스터디에 대해 자세히 적어 주세요.
                   </small>
-                  <small v-if="errors.fullDescription" class="form-text text-danger">{{ errors.fullDescription }}</small>
+                  <small v-if="errors.fullDescription" class="form-text text-danger">{{
+                      errors.fullDescription
+                    }}</small>
                 </div>
                 <!-- 제출 버튼 -->
                 <div class="form-group">
-                  <button class="btn btn-primary btn-block" type="submit">스터디 수정하기</button>
+                  <button class="btn btn-primary btn-block" type="submit">스터디 소개 수정하기</button>
                 </div>
               </form>
             </card>
@@ -88,35 +93,21 @@
         </div>
       </div>
     </div>
-
-    <!-- 에러 모달 -->
-    <modal
-        v-if="showErrorModal"
-        :show="showErrorModal"
-        @close="closeErrorModal"
-        type="notice"
-    >
-      <template #header>
-        <h4 class="modal-title">스터디 등록 실패</h4>
-      </template>
-      <template>
-        <p>{{ errorMessage }}</p>
-      </template>
-      <template #footer>
-        <button class="btn btn-primary" @click="closeErrorModal">닫기</button>
-      </template>
-    </modal>
   </div>
 </template>
-
 
 <script>
 import {Card} from "@/components";
 import {Editor} from "@toast-ui/vue-editor";
-import Modal from "@/components/Modal.vue";
 
 export default {
-  components: {Modal, Card, Editor},
+  components: {Card, Editor},
+  props: {
+    study: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       studyForm: {
@@ -129,14 +120,43 @@ export default {
       showErrorModal: false,
       errorMessage: null,
     };
+  }, mounted() {
+    // study 데이터를 studyForm에 복사
+    this.initializeForm();
+    this.initializeEditor();
   },
   methods: {
+    initializeForm() {
+      if (this.study) {
+        this.studyForm.path = this.study.path;
+        this.studyForm.title = this.study.title;
+        this.studyForm.shortDescription = this.study.shortDescription;
+        this.studyForm.fullDescription = this.study.fullDescription;
+      }
+    },
+    initializeEditor() {
+      if (this.$refs.fullDescriptionEditor) {
+        this.$refs.fullDescriptionEditor.invoke('setMarkdown', this.studyForm.fullDescription || '');
+      }
+    },
     async handleSubmit() {
+      console.log("handleSubmit 호출됨");
       try {
         this.studyForm.fullDescription = this.$refs.fullDescriptionEditor.invoke('getMarkdown');
-        await this.$store.dispatch("studies/createStudy", this.studyForm);
-        await this.$router.replace("/study-info");
+        await this.$store.dispatch("studies/editStudyDescription", {
+          payload: this.studyForm,
+          path: this.study.path,
+        });
 
+        // 부모 컴포넌트에 수정 완료 이벤트 전송
+        this.$emit("update-description", {
+          shortDescription: this.studyForm.shortDescription,
+          fullDescription: this.studyForm.fullDescription,
+        });
+        console.log("update-description 이벤트 전송");
+
+        // 수정 완료 모달 표시
+        this.$emit("show-modal", "수정이 완료되었습니다.");
       } catch (error) {
         if (error.response && error.response.data) {
           this.errors = {};
@@ -149,7 +169,7 @@ export default {
           });
         } else {
           // 글로벌 에러
-          this.errorMessage = "스터디 생성에 실패하였습니다.";
+          this.errorMessage = "스터디 소개 수정에 실패하였습니다.";
           this.showErrorModal = true;
         }
       }
@@ -157,7 +177,18 @@ export default {
     closeErrorModal() {
       this.showErrorModal = false;
     },
-  }
+  },
+  watch: {
+    // study 데이터가 변경되면 studyForm을 다시 초기화
+    study: {
+      handler() {
+        this.initializeForm();
+        this.initializeEditor();
+      },
+      deep: true,
+    },
+  },
+
 };
 </script>
 
@@ -171,6 +202,15 @@ export default {
 .content {
   height: auto;
   overflow-y: hidden;
+}
+
+.small-text {
+  font-size: 0.8rem; /* 글씨 크기 */
+}
+
+label {
+  font-size: 1.2rem; /* 글씨 크기 */
+  font-weight: bold; /* 원하는 경우 글씨를 더 강조 */
 }
 
 </style>

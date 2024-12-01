@@ -8,6 +8,7 @@ export default {
         return {
             userZones: [],
             allZones: [],
+            // studyZones: [],
         }
     },
     mutations,

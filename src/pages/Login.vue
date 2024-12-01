@@ -47,7 +47,7 @@
               </div>
               <div class="card-footer text-center">
                 <a
-                    href="#pablo"
+                    :href="`${apiUrl}/free-login`"
                     class="btn btn-primary btn-round btn-lg btn-block"
                 >로그인없이 시작</a
                 >
@@ -103,9 +103,11 @@ export default {
       }
       window.location.href = url;
     },
-    startWithoutLogin() {
-      this.$router.push('/home');
-    }
+    // redirectToAdmin() {
+    //   const url = `${this.apiUrl}/free-login`;
+    //   console.log("Redirecting to:", url); // URL 확인
+    //   window.location.href = url;
+    // },
   }
 };
 </script>

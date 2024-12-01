@@ -3,6 +3,9 @@ export default {
         state.userTags = payload.userTags;
     },
     setAllTags(state, payload) {
-        state.allTags = payload.tags;
-    }
+        state.allTags = payload.map(tagResponse => tagResponse.tag);
+    },
+    // setStudyTags(state, payload) {
+    //     state.studyTags = payload.studyTags;
+    // }
 }

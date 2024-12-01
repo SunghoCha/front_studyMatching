@@ -32,7 +32,7 @@ export default {
         image: {label: "배너 이미지", icon: "fa fa-image"},
         tags: {label: "스터디 주제", icon: "fa fa-tags"},
         zones: {label: "활동 지역", icon: "fa fa-map-marker-alt"},
-        study: {label: "스터디 설정", icon: "fa fa-cogs"},
+        settings: {label: "스터디 설정", icon: "fa fa-cogs"},
       },
     };
   },

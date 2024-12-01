@@ -12,6 +12,7 @@ import studyForm from "@/pages/StudyForm.vue";
 import studyInfo from "@/pages/StudyInfo.vue";
 import studyInfo2 from "@/pages/StudyInfo2.vue";
 import studyList from "@/pages/StudyList.vue";
+import EventForm from "@/pages/EventForm.vue";
 
 
 Vue.use(Router);
@@ -100,6 +101,14 @@ const router = new Router({
       path: '/study-list',
       name: 'StudyList',
       components: { default: studyList, header: MainNavbar, footer: MainFooter },
+      props: {
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/study-event',
+      name: 'EventForm',
+      components: { default: EventForm, header: MainNavbar, footer: MainFooter },
       props: {
         footer: { backgroundColor: 'black' }
       }

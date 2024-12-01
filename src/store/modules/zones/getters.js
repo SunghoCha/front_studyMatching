@@ -4,5 +4,8 @@ export default {
     },
     allZones(state) {
         return state.allZones
-    }
+    },
+    // studyZones(state) {
+    //     return state.studyZones
+    // }
 }

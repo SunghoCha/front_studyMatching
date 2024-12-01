@@ -4,5 +4,8 @@ export default {
     },
     allTags(state) {
         return state.allTags
-    }
+    },
+    // studyTags(state) {
+    //     return state.studyTags
+    // },
 }

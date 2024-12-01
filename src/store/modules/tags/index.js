@@ -8,6 +8,7 @@ export default {
         return {
             userTags: [],
             allTags: [],
+            // studyTags: [],
         }
     },
     mutations,

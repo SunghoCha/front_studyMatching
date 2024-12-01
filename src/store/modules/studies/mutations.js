@@ -69,9 +69,26 @@ export default {
         };
     },
 
+    setStudyTags(state, tags) {
+      if (state.currentStudy) {
+          state.currentStudy.tags = tags;
+      }
+    },
 
+    setStudyZones(state, zones) {
+        if (state.currentStudy) {
+            state.currentStudy.zones = zones;
+        }
+    },
 
-    // 스터디 필드 일부만 업데이트 가능
+    setStudyDescription(state, payload) {
+        if (state.currentStudy) {
+            state.currentStudy.shortDescription = payload.shortDescription;
+            state.currentStudy.fullDescription = payload.fullDescription;
+        }
+    },
+
+    // 스터디 필드 일부만 업데이트 가능 => 이걸로 통합할지 고민중
     updateCurrentStudyField(state, { field, value }) {
         if (state.currentStudy && field in state.currentStudy) {
             state.currentStudy[field] = value;

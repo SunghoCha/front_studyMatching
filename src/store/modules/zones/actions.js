@@ -27,23 +27,25 @@ export default {
     },
 
     async loadAllZones(context) {
+
         console.log("전체 지역 목록 비동기 요청 보냄")
         const accessToken = store.getters['auth/token'];
 
-        const response = await fetch(`${apiUrl}/zone`, {
+        const response = await fetch(`${apiUrl}/zone/allZones`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             }
         });
-        console.log("전체 지역 목록 반환 완료")
+
         const responseData = await response.json();
 
         if (!response.ok) {
             console.log("전체 지역 목록 불러오기 실패")
             const error = new Error(responseData.message || '전체 지역 목록 반환 실패')
         }
+        console.log("전체 지역 목록 반환 완료")
         context.commit('setAllZones', responseData);
     },
 

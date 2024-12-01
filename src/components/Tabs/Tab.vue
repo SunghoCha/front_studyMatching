@@ -23,6 +23,7 @@ export default {
       active: false
     };
   },
+
   mounted() {
     this.addTab(this);
   },

@@ -4,5 +4,8 @@ export default {
     },
     setAllZones(state, payload) {
         state.allZones = payload;
-    }
+    },
+    // setStudyZones(state, payload) {
+    //     state.studyZones = payload;
+    // }
 }

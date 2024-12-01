@@ -73,7 +73,6 @@
   </div>
 </template>
 
-
 <script>
 import { Card } from "@/components";
 
@@ -83,16 +82,13 @@ export default {
     return {
       inputValue: "",
       zones: [],
-      availableZones: [],
       suggestions: [],
       error: null,
     };
   },
-  created() {
-    this.fetchAllZones();
-  },
   mounted() {
-    this.fetchUserZones(); // 컴포넌트 생성할 때 유저의 지역 목록 가져옴
+    this.fetchAllZones(); // 전체 지역 목록 로드
+    this.fetchUserZones(); // 유저 지역 목록 로드
   },
   computed: {
     userId() {
@@ -102,7 +98,16 @@ export default {
       return this.$store.getters["zones/userZones"];
     },
     allZones() {
-      return this.$store.getters["zones/allZones"];
+      const zones = this.$store.getters["zones/allZones"];
+      console.log("전체 지역 목록 (computed):", zones);
+
+      return this.$store.getters["zones/allZones"].map(zone => ({
+        localName: zone.localName,
+        province: zone.province,
+        displayName: zone.province === "none"
+            ? `${zone.localName}` // province가 "none"이면 localName만 표시
+            : `${zone.localName} (${zone.province})`
+      }));
     },
   },
   methods: {
@@ -121,23 +126,20 @@ export default {
     },
     async fetchAllZones() {
       try {
-        await this.$store.dispatch("zones/loadAllZones");
-        this.availableZones = this.allZones.map(zone => ({
+        await this.$store.dispatch('zones/loadAllZones');
+        this.zones = this.userZones.map((zone) => ({
           localName: zone.localName,
           province: zone.province,
-          displayName: zone.province === "none"
-              ? `${zone.localName}` // province가 "none"이면 localName만 표시
-              : `${zone.localName} (${zone.province})` // 그렇지 않으면 전체 표시
+          displayName: `${zone.localName} (${zone.province})`,
         }));
-        console.log("전체 지역 설정 완료", this.availableZones);
+        console.log("전체 지역 설정 완료", this.zones);
       } catch (error) {
         this.error = error.message || "전체 지역 목록을 불러오는데 실패했습니다.";
-        this.availableZones = [];
       }
     },
     onInput() {
       const searchTerm = this.inputValue.toLowerCase();
-      this.suggestions = this.availableZones.filter((zone) =>
+      this.suggestions = this.allZones.filter((zone) =>
           zone.displayName.toLowerCase().includes(searchTerm)
       );
     },
@@ -180,7 +182,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .zones-list {
   margin-top: 10px;
@@ -222,4 +223,3 @@ export default {
   background-color: #f0f0f0;
 }
 </style>
-

@@ -87,7 +87,7 @@ export default {
           'warning',
           'danger',
           'default',
-          'neutral'
+          'neutral',
         ];
         return acceptedValues.indexOf(value) !== -1;
       }
@@ -140,12 +140,15 @@ export default {
       if (tab.disabled) {
         return;
       }
-      if (this.handleClick) {
-        this.handleClick(tab);
+      if (typeof this.handleClick === "function") {
+        this.handleClick(tab); // handleClick 메서드가 존재할 경우 호출
       }
       this.deactivateTabs();
       tab.active = true;
-      this.$emit('input', tab.label || tab.id);
+
+      const activeTab = tab.label || tab.id;
+      this.$emit('input', activeTab); // v-model과 연동
+      this.$emit('change', activeTab); // @change 이벤트 발생
     },
     deactivateTabs() {
       this.tabs.forEach(tab => {
