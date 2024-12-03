@@ -54,20 +54,39 @@ export default {
 
         return responseData;
     },
-    async loadStudies(context, page) {
+    async loadStudies(context, { page, sortOptions, search }) {
         console.log("전체 스터디 목록 요청");
         const accessToken = store.getters['auth/token'];
 
         context.commit('clearStudyList');
         context.commit('clearPaginationInfo');
 
-        const response = await fetch(`${apiUrl}/study/list?page=${page}`, {
-            method: 'GET',
+        //url 세팅
+        const url = new URL(`${apiUrl}/study/list`);
+        url.searchParams.append('page', page);
+
+        // 다중 정렬 기준 추가
+        if (Array.isArray(sortOptions) && sortOptions.length > 0) {
+            sortOptions.forEach(({ type, order }) => {
+                url.searchParams.append('sort', `${type},${order}`);
+            });
+        }
+
+        // 검색어 추가
+        if (search) {
+            url.searchParams.append("search", search);
+        }
+
+        console.log("Request URL:", url.toString());
+
+        const response = await fetch(url.toString(), {
+            method: "GET",
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
         });
+
         const responseData = await response.json();
         console.log("스터디 목록 반환 완료")
 
@@ -76,6 +95,7 @@ export default {
             const error = new Error(responseData.message || `스터디 목록 반환 실패`)
             throw error;
         }
+
         const studyList = responseData.content;
         const paginationInfo = {
             currentPage: responseData.currentPage,
@@ -203,16 +223,77 @@ export default {
         const responseData = await response.json();
 
         if (!response.ok) {
-            console.log("예외 발생")
+            console.log("스터디 소개 수정 실패")
             throw new Error(responseData.errorMessage || '스터디 소개 등록에 실패하였습니다.')
         }
         context.commit("setStudyDescription", responseData);
-        console.log("Vuex 액션 성공적으로 종료");
+    },
+    async editStudyPath(context, {payload, path}) {
+        const accessToken = store.getters['auth/token'];
+        console.log("스터디 경로 수정 요청 전송 시작");
+
+        const response = await fetch(`${apiUrl}/study/${path}/setting/path`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                path: payload
+            })
+        });
+        console.log("스터디 경로 수정 요청 전송 완료");
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            console.log("스터디 경로 수정 실패");
+            throw new Error(responseData.errorMessage || '스터디 경로 수정에 실패하였습니다.');
+        }
+        console.log("Committing update to state:", {
+            field: path, // 확인: 올바른 key를 사용하는지
+            value: responseData.path, // 확인: 서버에서 받은 경로가 정확한지
+        });
+
+        context.commit("updateCurrentStudyField", {field: 'path', value: responseData.path});
+
+        console.log(
+            `Updated field 'path':`,
+            context.state.currentStudy['path'] // 여기에서 field를 'path'로 고정
+        );
+        return responseData;
+    },
+    async editStudyTitle(context, {payload, path}) {
+        const accessToken = store.getters['auth/token'];
+        console.log("스터디 제목 수정 요청 전송 시작");
+
+        const response = await fetch(`${apiUrl}/study/${path}/setting/title`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': `application/json`
+            },
+            body: JSON.stringify({
+                title: payload
+            })
+        });
+        console.log("스터디 제목 수정 요청 전송 완료");
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            console.log("스터디 제목 수정 실패");
+            throw new Error(responseData.errorMessage || '스터디 제목 수정에 실패하였습니다.');
+        }
+        context.commit("updateCurrentStudyField", {field: 'title', value: responseData.title})
+
+        return responseData;
     },
     async publishStudy(context, path) {
         const accessToken = store.getters['auth/token'];
+        console.log("스터디 공개 요청 전송 시작");
 
-        const response = await fetch(`${apiUrl}/study/${path}/setting/`, {
+        const response = await fetch(`${apiUrl}/study/${path}/setting/publish`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -226,6 +307,71 @@ export default {
         if (!response.ok) {
             throw new Error(responseData.errorMessage || '스터디 공개 요청에 실패하였습니다.')
         }
+        context.commit("updateCurrentStudyField", {field: 'published', value: responseData.published})
 
+        return responseData;
+    },
+    async closeStudy(context, path) {
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/study/${path}/setting/close`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+        });
+        console.log("스터디 종료 요청 전송 완료");
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.errorMessage || '스터디 종료 요청에 실패하였습니다.')
+        }
+        context.commit("updateCurrentStudyField", {field: 'closed', value: responseData.closed})
+
+        return responseData;
+    },
+    async startRecruitment(context, path) {
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/study/${path}/setting/recruit/start`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("스터디 모집 시작 요청 전송 완료");
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.errorMessage || '스터디 모집 시작 요청 전송에 실패하였습니다.');
+        }
+        context.commit("updateCurrentStudyField", {field: 'recruiting', value: responseData.recruiting})
+
+        return responseData;
+    },
+    async stopRecruitment(context, path) {
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/study/${path}/setting/recruit/stop`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("스터디 모집 종료 요청 전송 완료");
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.errorMessage || '스터디 모집 종료 요청 전송에 실패하였습니다.');
+        }
+        context.commit("updateCurrentStudyField", {field: 'recruiting', value: responseData.recruiting})
+
+        return responseData;
     }
 }

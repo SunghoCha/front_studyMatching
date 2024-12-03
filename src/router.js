@@ -74,7 +74,7 @@ const router = new Router({
       }
     },
     {
-      path: '/study',
+      path: '/study-form',
       name: 'StudyForm',
       components: { default: studyForm, header: MainNavbar, footer: MainFooter },
       props: {

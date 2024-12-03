@@ -90,8 +90,18 @@ export default {
 
     // 스터디 필드 일부만 업데이트 가능 => 이걸로 통합할지 고민중
     updateCurrentStudyField(state, { field, value }) {
+        // 로그 추가: mutation 실행 시
+        console.log("Mutation triggered: updateCurrentStudyField");
+        console.log("State before update:", JSON.stringify(state.currentStudy));
+        console.log("Field to update:", field);
+        console.log("New value:", value);
+
         if (state.currentStudy && field in state.currentStudy) {
             state.currentStudy[field] = value;
+            // 로그 추가: 업데이트 후 상태 확인
+            console.log("State after update:", JSON.stringify(state.currentStudy));
+        } else {
+            console.warn(`Field "${field}" does not exist in currentStudy.`);
         }
     }
 };

@@ -24,12 +24,11 @@
                 <!-- "스터디 탈퇴" 버튼 -->
                 <button class="btn btn-danger" @click="leaveStudy">스터디 탈퇴</button>
               </template>
-              <template v-else-if="study.isManager">
-              </template>
-              <template v-else>
+              <template v-else-if="study.recruiting && !study.isMember && !study.isManager">
                 <!-- "스터디 참가" 버튼 -->
                 <button class="btn btn-primary" @click="joinStudy">스터디 참가</button>
               </template>
+              <template v-else></template>
             </div>
           </tab-pane>
           <tab-pane label="구성원">

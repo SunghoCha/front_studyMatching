@@ -30,14 +30,9 @@
     </template>
     <template slot="navbar-menu">
       <li class="nav-item">
-        <a
-          class="nav-link"
-          href="https://www.creative-tim.com/product/vue-now-ui-kit"
-          target="_blank"
-        >
-          <i class="now-ui-icons arrows-1_cloud-download-93"></i>
-          <p>Download</p>
-        </a>
+        <nav-link to="/study-list" class="nav-link home-link">
+          <i class="now-ui-icons business_bank"></i> Home
+        </nav-link>
       </li>
       <drop-down
         tag="li"
@@ -58,18 +53,18 @@
       </drop-down>
       <drop-down
               tag="li"
-              title="Examples"
-              icon="now-ui-icons design_image"
+              title="스터디 관리"
+              icon="now-ui-icons education_paper"
               class="nav-item"
       >
-        <nav-link to="/landing">
-          <i class="now-ui-icons education_paper"></i> Landing
+        <nav-link to="/study-list">
+          <i class="now-ui-icons education_paper"></i> 스터디목록
         </nav-link>
         <nav-link to="/login">
-          <i class="now-ui-icons users_circle-08"></i> Login
+          <i class="now-ui-icons users_circle-08"></i> 내 스터디
         </nav-link>
-        <nav-link to="/profile">
-          <i class="now-ui-icons users_single-02"></i> Profile
+        <nav-link to="/study-form">
+          <i class="now-ui-icons users_single-02"></i> 스터디 만들기
         </nav-link>
       </drop-down>
       <li class="nav-item">
@@ -167,6 +162,9 @@ export default {
 <style scoped>
 .custom-login-text {
   color: white; /* 텍스트 색상 흰색 */
+}
+.home-link {
+  color: white !important; /* Home 링크에만 흰색 적용 */
 }
 
 </style>

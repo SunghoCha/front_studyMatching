@@ -1,9 +1,15 @@
 <template>
   <div class="page-header clear-filter" filter-color="orange">
     <div class="content">
+
+      <sub-navbar
+          @sortChanged="handleSortChanged"
+          @searchQueryUpdated="handleSearchQueryUpdated"
+      />
+
       <div class="container">
         <div class="row">
-          <div class="custom-card" v-for="study in studyList" :key="study.path">
+          <div class="custom-card" v-for="study in filteredStudyList" :key="study.path">
             <card
                 :title="study.title"
                 :description="study.shortDescription"
@@ -39,7 +45,6 @@
           <button @click="goToPage(paginationInfo.currentPage + 1)" :disabled="paginationInfo.currentPage === paginationInfo.totalPages">Next</button>
           <button @click="goToPage(paginationInfo.totalPages)" :disabled="paginationInfo.currentPage === paginationInfo.totalPages">Last</button>
         </div>
-
       </div>
     </div>
   </div>
@@ -47,20 +52,26 @@
 
 <script>
 import Card from "@/components/Cards/Card.vue";
+import SubNavbar from "@/pages/SubNavbar.vue";
+
 
 export default {
   components: {
     Card,
+    SubNavbar,
   },
   data() {
     return {
       studyList: [],
+      filteredStudyList: [],
       paginationInfo: {
         currentPage: 1,
         totalPages: 0,
         totalCount: 0,
         size: 0,
       },
+      sortOption: [],
+      searchQuery: "",
     };
   },
   async mounted() {
@@ -69,8 +80,25 @@ export default {
   methods: {
     async loadStudies(page) {
       try {
-        const { studyList, paginationInfo } = await this.$store.dispatch("studies/loadStudies", page - 1 );
+        console.log("Loading studies with the following parameters:");
+        console.log("Page:", page);
+        console.log("Sort Options:", this.sortOption); // 객체 배열 로그
+        console.log("Search Query:", this.searchQuery);
+
+        const { studyList, paginationInfo } = await this.$store.dispatch(
+            "studies/loadStudies",
+            {
+              page: page - 1,
+              sortOptions: this.sortOption, // 객체 배열 전달
+              search: this.searchQuery,
+            }
+        );
+
+        console.log("Received studyList:", studyList);
+        console.log("Pagination Info:", paginationInfo);
+
         this.studyList = studyList;
+        this.filteredStudyList = studyList;
         this.paginationInfo = paginationInfo;
       } catch (error) {
         console.error("스터디 목록 로드 실패:", error);
@@ -78,12 +106,35 @@ export default {
     },
     goToPage(page) {
       this.loadStudies(page);
-    }
-  }
+    },
+    handleSortChanged(sortOptions) {
+      console.log("Received sort options from child:", sortOptions);
+
+      if (Array.isArray(sortOptions) && sortOptions.length > 0) {
+        // 받은 모든 정렬 옵션을 처리
+        this.sortOption = sortOptions;
+
+        console.log("Updated sortOption in parent:", this.sortOption);
+        this.loadStudies(this.paginationInfo.currentPage);
+      } else {
+        console.error("Invalid sort options received:", sortOptions);
+      }
+    },
+    handleSearchQueryUpdated(searchQuery) {
+      console.log("Search query updated:", searchQuery);
+      this.searchQuery = searchQuery;
+      this.loadStudies(1);
+
+    },
+  },
 };
 </script>
 
 <style scoped>
+.study-list-container {
+  position: relative; /* 스터디 리스트 컨테이너의 기준점 설정 */
+  z-index: 1; /* SubNavbar와 드롭다운 메뉴보다 낮게 설정 */
+}
 .page-header {
   min-height: 100vh;
   overflow: auto;
@@ -92,73 +143,77 @@ export default {
 .row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
 }
 
 .custom-card {
   flex: 0 0 calc(33.333% - 20px);
-  height: 250px; /* 카드의 높이를 고정 */
+  height: 250px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
 
 .custom-card-style {
-  background-color: #EAEAEA; /* 진한 회색 */
+  background-color: #eaeaea;
   border-radius: 8px;
   padding: 16px;
   display: flex;
   flex-direction: column;
-  height: 100%; /* 부모의 높이에 맞춰서 내부 카드 크기 고정 */
-  overflow: hidden; /* 내용이 넘칠 경우 잘라내기 */
-  position: relative; /* 버튼을 절대 위치로 배치할 수 있도록 설정 */
+  height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 ::v-deep(.custom-card-style .card-title) {
-  font-size: 1.5rem; /* 제목 글씨 크기 */
-  color: #000; /* 제목 글씨 색 */
-  margin-bottom: 10px; /* 제목과 설명 사이의 간격 */
+  font-size: 1.5rem;
+  color: #000;
+  margin-bottom: 10px;
 }
 
 ::v-deep(.custom-card-style .card-description) {
-  font-size: 1rem; /* 설명 글씨 크기 */
-  color: #666; /* 설명 글씨 색 */
-  overflow: hidden; /* 설명이 넘칠 경우 숨기기 */
-  text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 표시 */
+  font-size: 1rem;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 1; /* 최대 1줄까지만 표시 */
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-
-  /* 표준 속성 (브라우저 호환성을 위해) */
-  line-clamp: 3; /* 최대 3줄까지만 표시 */
-  box-orient: vertical;
 }
 
 ::v-deep(.custom-card-style .view-details) {
-  font-size: 0.875rem; /* 버튼 글씨 크기 */
+  font-size: 0.875rem;
   color: white;
   background-color: #007bff;
   border-radius: 4px;
   padding: 5px 10px;
-  position: absolute; /* 버튼을 절대 위치로 배치 */
-  bottom: 16px; /* 카드의 하단에 위치 */
-  right: 16px; /* 카드의 오른쪽에 위치 */
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
 }
 
 .tags {
   margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* 태그 간 간격 */
+  gap: 8px;
 }
 
 .tag {
-  background-color: #f0f0f0; /* 태그 배경색 */
-  color: #333; /* 태그 글자색 */
+  background-color: #f0f0f0;
+  color: #333;
   border-radius: 12px;
   padding: 4px 8px;
   font-size: 0.85rem;
   display: inline-block;
   white-space: nowrap;
+}
+
+.sub-navbar {
+  margin-top: 70px; /* main-navbar의 높이만큼 여백 추가 */
+  background-color: #f8f9fa;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 </style>
