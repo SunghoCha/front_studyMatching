@@ -6,9 +6,9 @@ export default {
 
     async editUserTag(context, {payload, userId}) {
         const accessToken = store.getters['auth/token'];
-        console.log("태그 수정 요청 전송 시작:" + userId);
-        // TODO 해당유저만 접근가능한 기능이니 userId를 url에 쓸 필요 없지 않을까?
-        const response = await fetch(`${apiUrl}/user-tag/${userId}`, {
+
+        console.log("태그 수정 요청 전송 시작:");
+        const response = await fetch(`${apiUrl}/user-tag`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -32,7 +32,7 @@ export default {
         console.log("유저 태그목록 비동기 요청 보냄")
         const accessToken = store.getters['auth/token'];
 
-        const response = await fetch(`${apiUrl}/user-tag/${userId}`, {
+        const response = await fetch(`${apiUrl}/user-tag`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,

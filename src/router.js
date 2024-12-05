@@ -13,6 +13,11 @@ import studyInfo from "@/pages/StudyInfo.vue";
 import studyInfo2 from "@/pages/StudyInfo2.vue";
 import studyList from "@/pages/StudyList.vue";
 import EventForm from "@/pages/EventForm.vue";
+import allStudyList from "@/pages/AllStudyList.vue";
+import myStudyList from "@/pages/ManagedStudyList.vue";
+import managedStudyList from "@/pages/ManagedStudyList.vue";
+import joinedStudyList from "@/pages/JoinedStudyList.vue";
+import studyWishList from "@/pages/StudyWishList.vue";
 
 
 Vue.use(Router);
@@ -99,8 +104,32 @@ const router = new Router({
     },
     {
       path: '/study-list',
-      name: 'StudyList',
-      components: { default: studyList, header: MainNavbar, footer: MainFooter },
+      name: 'AllStudyList',
+      components: { default: allStudyList, header: MainNavbar, footer: MainFooter },
+      props: {
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/managed-study-list',
+      name: 'ManagedStudyList',
+      components: { default: managedStudyList, header: MainNavbar, footer: MainFooter },
+      props: {
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/joined-study-list',
+      name: 'JoinedStudyList',
+      components: { default: joinedStudyList, header: MainNavbar, footer: MainFooter },
+      props: {
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/study-wishlist',
+      name: 'StudyWishlist',
+      components: { default: studyWishList, header: MainNavbar, footer: MainFooter },
       props: {
         footer: { backgroundColor: 'black' }
       }

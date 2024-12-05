@@ -42,10 +42,12 @@
               class="form-control search-input"
               placeholder="Search..."
               v-model="searchQuery"
-              @input="onSearchInput"
           />
           <button class="btn btn-primary search-button" @click="onSearch">
             Search
+          </button>
+          <button class="btn btn-primary reset-button" @click="onResetSearch">
+            <i class="fas fa-times"></i>
           </button>
         </li>
       </template>
@@ -91,13 +93,14 @@ export default {
       console.log("Emitting sortChanged event with options:", sortOptions);
       this.$emit("sortChanged", sortOptions);
     },
-    onSearchInput() {
-      console.log("Search query input:", this.searchQuery);
-      this.searchQueryUpdated(); // 실시간 검색
-    },
     onSearch() {
       console.log("Search button clicked. Search query:", this.searchQuery);
       this.searchQueryUpdated(); // 버튼 검색
+    },
+    onResetSearch() {
+      console.log("Reset search triggered");
+      this.searchQuery = "";
+      this.searchQueryUpdated();
     },
     searchQueryUpdated() {
       this.$emit("searchQueryUpdated", this.searchQuery);

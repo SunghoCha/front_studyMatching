@@ -1,13 +1,8 @@
 <template>
-  <div class="page-header clear-filter" filter-color="orange">
+
     <div class="content">
-
-      <sub-navbar
-          @sortChanged="handleSortChanged"
-          @searchQueryUpdated="handleSearchQueryUpdated"
-      />
-
       <div class="container">
+
         <div class="row">
           <div class="custom-card" v-for="study in filteredStudyList" :key="study.path">
             <card
@@ -47,18 +42,20 @@
         </div>
       </div>
     </div>
-  </div>
+
 </template>
 
 <script>
 import Card from "@/components/Cards/Card.vue";
-import SubNavbar from "@/pages/SubNavbar.vue";
 
 
 export default {
   components: {
     Card,
-    SubNavbar,
+
+  },
+  props: {
+    fetchStudies: Function,
   },
   data() {
     return {
@@ -79,52 +76,13 @@ export default {
   },
   methods: {
     async loadStudies(page) {
-      try {
-        console.log("Loading studies with the following parameters:");
-        console.log("Page:", page);
-        console.log("Sort Options:", this.sortOption); // 객체 배열 로그
-        console.log("Search Query:", this.searchQuery);
-
-        const { studyList, paginationInfo } = await this.$store.dispatch(
-            "studies/loadStudies",
-            {
-              page: page - 1,
-              sortOptions: this.sortOption, // 객체 배열 전달
-              search: this.searchQuery,
-            }
-        );
-
-        console.log("Received studyList:", studyList);
-        console.log("Pagination Info:", paginationInfo);
-
-        this.studyList = studyList;
-        this.filteredStudyList = studyList;
-        this.paginationInfo = paginationInfo;
-      } catch (error) {
-        console.error("스터디 목록 로드 실패:", error);
-      }
+      const { studyList, paginationInfo } = await this.fetchStudies(page);
+      this.studyList = studyList;
+      this.filteredStudyList = studyList;
+      this.paginationInfo = paginationInfo;
     },
     goToPage(page) {
       this.loadStudies(page);
-    },
-    handleSortChanged(sortOptions) {
-      console.log("Received sort options from child:", sortOptions);
-
-      if (Array.isArray(sortOptions) && sortOptions.length > 0) {
-        // 받은 모든 정렬 옵션을 처리
-        this.sortOption = sortOptions;
-
-        console.log("Updated sortOption in parent:", this.sortOption);
-        this.loadStudies(this.paginationInfo.currentPage);
-      } else {
-        console.error("Invalid sort options received:", sortOptions);
-      }
-    },
-    handleSearchQueryUpdated(searchQuery) {
-      console.log("Search query updated:", searchQuery);
-      this.searchQuery = searchQuery;
-      this.loadStudies(1);
-
     },
   },
 };

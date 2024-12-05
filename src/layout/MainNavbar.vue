@@ -35,21 +35,20 @@
         </nav-link>
       </li>
       <drop-down
-        tag="li"
-        title="Components"
-        icon="now-ui-icons design_app"
-        class="nav-item"
+          tag="li"
+          title="내 정보"
+          icon="now-ui-icons education_paper"
+          class="nav-item"
       >
-        <nav-link to="/">
-          <i class="now-ui-icons business_chart-pie-36"></i> All components
+        <nav-link to="/tag">
+          <i class="now-ui-icons education_paper"></i> 관심 태그
         </nav-link>
-        <a
-          href="https://demos.creative-tim.com/vue-now-ui-kit/documentation"
-          target="_blank"
-          class="dropdown-item"
-        >
-          <i class="now-ui-icons design_bullet-list-67"></i> Documentation
-        </a>
+        <nav-link to="/zone">
+          <i class="now-ui-icons users_circle-08"></i> 관심 지역
+        </nav-link>
+        <nav-link to="/study-wishlist">
+          <i class="now-ui-icons users_circle-08"></i> 관심 스터디
+        </nav-link>
       </drop-down>
       <drop-down
               tag="li"
@@ -60,8 +59,11 @@
         <nav-link to="/study-list">
           <i class="now-ui-icons education_paper"></i> 스터디목록
         </nav-link>
-        <nav-link to="/login">
-          <i class="now-ui-icons users_circle-08"></i> 내 스터디
+        <nav-link to="/managed-study-list">
+          <i class="now-ui-icons users_circle-08"></i> 관리 스터디
+        </nav-link>
+        <nav-link to="/joined-study-list">
+          <i class="now-ui-icons users_circle-08"></i> 가입 스터디
         </nav-link>
         <nav-link to="/study-form">
           <i class="now-ui-icons users_single-02"></i> 스터디 만들기

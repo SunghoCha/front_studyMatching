@@ -151,7 +151,7 @@ export default {
 
       console.log("전송할 태그 목록:", formData.tags);
       try {
-        const updatedTags = await this.$store.dispatch("tags/editTag", {
+        const updatedTags = await this.$store.dispatch('tags/editUserTag', {
           payload: formData,
           userId: this.userId,
         });
