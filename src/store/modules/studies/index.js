@@ -16,6 +16,7 @@ export default {
             currentStudy: { // 현재 선택된 스터디의 상세 정보
                 path: '',
                 title: '',
+                image: '',
                 published: false,
                 closed: false,
                 recruiting: false,

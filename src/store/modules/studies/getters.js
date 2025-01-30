@@ -15,6 +15,7 @@ export default {
         return {
             path: state.currentStudy.path,
             title: state.currentStudy.title,
+            image: state.currentStudy.image,
             published: state.currentStudy.published,
             closed: state.currentStudy.closed,
             recruiting: state.currentStudy.recruiting,

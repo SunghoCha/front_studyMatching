@@ -53,7 +53,7 @@ export default {
 
         return responseData;
     },
-    async loadStudies(context, { page, sortOptions, search }) {
+    async loadStudies(context, {page, sortOptions, search}) {
         console.log("전체 스터디 목록 요청");
         const accessToken = store.getters['auth/token'];
 
@@ -66,7 +66,7 @@ export default {
 
         // 다중 정렬 기준 추가
         if (Array.isArray(sortOptions) && sortOptions.length > 0) {
-            sortOptions.forEach(({ type, order }) => {
+            sortOptions.forEach(({type, order}) => {
                 url.searchParams.append('sort', `${type},${order}`);
             });
         }
@@ -115,7 +115,7 @@ export default {
         return {studyList, paginationInfo};
     },
 
-    async loadManagedStudies(context, { page, sortOptions, search }) {
+    async loadManagedStudies(context, {page, sortOptions, search}) {
         console.log("전체 스터디 목록 요청");
         const accessToken = store.getters['auth/token'];
 
@@ -128,7 +128,7 @@ export default {
 
         // 다중 정렬 기준 추가
         if (Array.isArray(sortOptions) && sortOptions.length > 0) {
-            sortOptions.forEach(({ type, order }) => {
+            sortOptions.forEach(({type, order}) => {
                 url.searchParams.append('sort', `${type},${order}`);
             });
         }
@@ -177,7 +177,7 @@ export default {
         return {studyList, paginationInfo};
     },
 
-    async loadJoinedStudies(context, { page, sortOptions, search }) {
+    async loadJoinedStudies(context, {page, sortOptions, search}) {
         console.log("전체 스터디 목록 요청");
         const accessToken = store.getters['auth/token'];
 
@@ -190,7 +190,7 @@ export default {
 
         // 다중 정렬 기준 추가
         if (Array.isArray(sortOptions) && sortOptions.length > 0) {
-            sortOptions.forEach(({ type, order }) => {
+            sortOptions.forEach(({type, order}) => {
                 url.searchParams.append('sort', `${type},${order}`);
             });
         }
@@ -239,7 +239,7 @@ export default {
         return {studyList, paginationInfo};
     },
 
-    async loadStudyWishList(context, { page, sortOptions, search }) {
+    async loadStudyWishList(context, {page, sortOptions, search}) {
         console.log("전체 스터디 목록 요청");
         const accessToken = store.getters['auth/token'];
 
@@ -252,7 +252,7 @@ export default {
 
         // 다중 정렬 기준 추가
         if (Array.isArray(sortOptions) && sortOptions.length > 0) {
-            sortOptions.forEach(({ type, order }) => {
+            sortOptions.forEach(({type, order}) => {
                 url.searchParams.append('sort', `${type},${order}`);
             });
         }
@@ -476,6 +476,28 @@ export default {
 
         return responseData;
     },
+    async editStudyBanner(context, {payload, path}) {
+        const accessToken = store.getters['auth/token'];
+        console.log("스터디 배너 수정 요청 전송 시작");
+
+        const formData = new FormData();
+        formData.append('image', payload.image);
+        const response = await fetch(`${apiUrl}/study/${path}/setting/banner`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+            body: formData
+        });
+
+        const responseData = await response.json();
+        if (!response.ok) {
+            console.log("스터디 배너 수정 실패");
+            throw new Error(responseData.errorMessage || '스터디 배너 수정에 실패하였습니다.');
+        }
+        context.commit("updateCurrentStudyField", {field: 'image', value: responseData.image})
+
+    },
     async publishStudy(context, path) {
         const accessToken = store.getters['auth/token'];
         console.log("스터디 공개 요청 전송 시작");
@@ -560,5 +582,21 @@ export default {
         context.commit("updateCurrentStudyField", {field: 'recruiting', value: responseData.recruiting})
 
         return responseData;
+    },
+    async deleteStudy(context, path) {
+        const accessToken = store.getters['auth/token'];
+
+        const response = await fetch(`${apiUrl}/study/${path}/setting/remove`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+
+        });
+        console.log("스터디 삭제 요청 전송 완료");
+
+        if (!response.ok) {
+            throw new Error('스터디 삭제에 실패하였습니다.');
+        }
     }
 }

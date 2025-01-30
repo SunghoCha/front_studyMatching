@@ -146,7 +146,6 @@
                 <button
                     class="btn btn-outline-danger"
                     type="submit"
-                    :disabled="!study.removable"
                 >
                   스터디 삭제
                 </button>
@@ -269,7 +268,8 @@ export default {
     async deleteStudy() {
       try {
         console.log("스터디 삭제 API 호출");
-        await this.$router.push("/home"); // 삭제 후 홈으로 이동
+        await this.$store.dispatch('studies/deleteStudy', this.study.path)
+        await this.$router.push("/study-list");
 
       } catch (error) {
         console.error("스터디 삭제 실패:", error);

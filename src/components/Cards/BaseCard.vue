@@ -27,7 +27,9 @@
     <div v-if="$slots.default" class="card-body" :class="cardBodyClasses">
       <slot></slot>
     </div>
-    <div class="card-footer">
+    <slot name="raw-content"></slot>
+    <hr v-if="$slots.footer && !noFooterLine" />
+    <div class="card-footer" v-if="$slots.footer">
       <slot name="footer"></slot>
     </div>
   </div>
@@ -54,8 +56,8 @@ export default {
     },
     customStyle: {
       type: Object,
-      default: () => ({}),
-    },
+      default: () => ({})
+    }
   },
   data() {
     return {
@@ -65,30 +67,14 @@ export default {
         padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between', // 카드의 내부 정렬을 균등하게
-      },
+      }
     };
-  },
+  }
 };
 </script>
 
 <style scoped>
 .card {
   font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* 카드 내부를 균등하게 정렬 */
-  height: 100%; /* 모든 카드의 높이를 동일하게 설정 */
-}
-
-.card-body {
-  flex: 1; /* 내용이 카드의 중간 부분을 채우도록 확장 */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* 태그와 버튼이 항상 하단에 배치되도록 */
-}
-
-.card-footer {
-  margin-top: auto; /* 항상 카드의 하단에 고정 */
 }
 </style>

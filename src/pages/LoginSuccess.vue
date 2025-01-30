@@ -7,7 +7,7 @@
     <div class="content">
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
-          <card type="login" plain>
+          <base-card type="login" plain>
 
             <div slot="header" class="logo-container">
               <img v-lazy="'img/now-logo.png'" alt=""/>
@@ -35,7 +35,7 @@
                 </h6>
               </div>
             </template>
-          </card>
+          </base-card>
         </div>
       </div>
     </div>
@@ -44,12 +44,13 @@
 <script>
 import {Card, Button, FormGroupInput} from '@/components';
 import {jwtDecode} from "jwt-decode";
+import BaseCard from "@/components/Cards/BaseCard.vue";
 
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
   components: {
-    Card,
+    BaseCard,
     [Button.name]: Button,
     [FormGroupInput.name]: FormGroupInput
   },

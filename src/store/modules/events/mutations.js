@@ -6,5 +6,9 @@ export default {
     setCurrentEnrollment(state, enrollment) {
         state.currentEnrollment = enrollment;
     },
+    setCurrentEvent(state, event) {
+        console.log("Mutating Event in Vuex:", event);
+        state.currentEvent = event;
+    }
 
 }

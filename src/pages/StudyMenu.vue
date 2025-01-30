@@ -16,7 +16,9 @@
             <template slot="label">
               <i class="fa fa-info-circle"></i> 소개
             </template>
-            <p>{{ study.fullDescription }}</p>
+            <div class="study-full-description">
+              <p v-html="study.fullDescription.replace(/\n/g, '<br>')"></p>
+            </div>
 
             <!-- 조건에 따라 버튼 표시 -->
             <div class="mt-3">
@@ -35,11 +37,17 @@
             <template slot="label">
               <i class="fa fa-user"></i> 구성원
             </template>
-            <div v-if="study.members && study.members.length > 0">
-              <p v-for="(member, index) in study.members" :key="index" class="text-left">
-                {{ formatMemberInfo(member)}}
-              </p>
+            <div class="study-members-description">
+              <div v-if="study.members && study.members.length > 0">
+                <p v-for="(member, index) in study.members" :key="index" class="text-left">
+                  {{ formatMemberInfo(member) }}
+                </p>
+              </div>
+              <div v-else>
+                <p>현재 구성원이 없습니다. 스터디에 참여하여 멤버가 되어보세요.</p>
+              </div>
             </div>
+
           </tab-pane>
           <tab-pane label="모임" v-if="study.isMember || study.isManager">
             <template slot="label">
@@ -56,7 +64,7 @@
               <div class="settings-content">
                 <component
                     :is="currentEventComponent"
-                    :event="selectedEvent"
+                    :selectedEvent="selectedEvent"
                     :events="eventMenu === 'newEvents' ? newEvents : oldEvents"
                     :study="study"
                     @view-event="viewEvent"
@@ -127,6 +135,7 @@ import EventForm from "@/pages/EventForm.vue";
 import EventList from "@/pages/EventList.vue";
 import EventInfo from "@/pages/EventInfo.vue";
 import EventIntroduction from "@/pages/EventIntroduction.vue";
+import StudyBannerForm from "@/pages/StudyBannerForm.vue";
 
 export default {
   components: {
@@ -136,6 +145,7 @@ export default {
     TabPane,
     Tabs,
     StudyDescriptionForm,
+    StudyBannerForm,
     StudyZoneForm,
     StudyTagsForm,
     StudySettingForm,
@@ -143,6 +153,7 @@ export default {
     EventList,
     EventInfo,
     EventIntroduction,
+
   },
   props: {
     study: Object,
@@ -157,6 +168,7 @@ export default {
       oldEvents: [],
       menuComponents: {
         description: "StudyDescriptionForm",
+        banner: "StudyBannerForm",
         zones: "StudyZoneForm",
         tags: "StudyTagsForm",
         settings: "StudySettingForm"
@@ -224,6 +236,7 @@ export default {
     async joinStudy() {
       await this.$store.dispatch('studies/joinStudy', this.study.path);
       console.log("스터디 참가 성공");
+      // TODO: 삭제 예정
       this.$nextTick(() => {
         console.log("스터디 참가 상태:", this.study.isMember); // 반영된 상태
       });
@@ -312,6 +325,41 @@ p {
 
 .custom-modal-header .btn-close:hover {
   color: #666;
+}
+
+.formatted-text {
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  line-height: 1.8; /* 줄 간격 설정 */
+  margin-bottom: 1rem; /* 문단 간 간격 */
+  color: #333; /* 텍스트 색상 */
+}
+
+.study-full-description {
+  background-color: #e7f3ff; /* 연한 하늘색 배경 */
+  border: 1px solid #b3d7ff; /* 하늘색 테두리 */
+  border-radius: 10px; /* 둥근 모서리 */
+  padding: 1.5rem; /* 내부 여백 */
+  margin: 1.5rem auto; /* 상하 여백과 중앙 정렬 */
+  max-width: 800px; /* 최대 너비 설정 */
+}
+
+.study-full-description p {
+  color: #0056b3; /* 진한 하늘색 텍스트 */
+  font-size: 1.0rem; /* 약간 큰 글씨 */
+  line-height: 1.8; /* 줄 간격 */
+
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  margin-bottom: 1rem; /* 문단 간 간격 */
+
+}
+
+.study-members-description {
+  background-color: #e7f3ff; /* 연한 하늘색 배경 */
+  border: 1px solid #b3d7ff; /* 하늘색 테두리 */
+  border-radius: 10px; /* 둥근 모서리 */
+  padding: 1.5rem; /* 내부 여백 */
+  margin: 1.5rem auto; /* 상하 여백과 중앙 정렬 */
+  max-width: 800px; /* 최대 너비 설정 */
 }
 
 

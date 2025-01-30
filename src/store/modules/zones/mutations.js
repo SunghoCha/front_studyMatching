@@ -1,6 +1,6 @@
 export default {
     setUserZones(state, payload) {
-        state.userZones = payload;
+        state.userZones = payload.zones;
     },
     setAllZones(state, payload) {
         state.allZones = payload;

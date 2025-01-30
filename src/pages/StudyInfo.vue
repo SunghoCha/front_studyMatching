@@ -42,7 +42,7 @@
 
                 <!-- Study Short Description -->
                 <div class="row justify-content-center">
-                  <div class="col-10">
+                  <div class="col-10 study-short-description">
                     <p class="lead">{{ study.shortDescription }}</p>
                   </div>
                 </div>
@@ -110,7 +110,6 @@ export default {
         console.log("path 정보:" + path);
         await this.$store.dispatch("studies/loadStudy", path);
         console.log("study 정보: " + JSON.stringify(this.study, null, 2));
-        console.log("tags 정보: ", this.study.tags[0].tag);
       } catch (error) {
         console.error("스터디 데이터를 로드하는 중 오류 발생:", error);
         this.errorModalVisible = true;
@@ -143,5 +142,18 @@ export default {
 
 .modal.show {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.study-info .study-short-description p{
+  color: white; /* 텍스트를 흰색으로 강제 설정 */
+  padding: 1rem; /* 내부 여백 */
+  border-radius: 10px; /* 둥근 모서리 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+  margin-bottom: 1rem; /* 아래 여백 */
+}
+
+.study-info .study-short-description .lead {
+  margin: 0; /* 기본 여백 제거 */
+  line-height: 1.8; /* 줄 간격 */
 }
 </style>

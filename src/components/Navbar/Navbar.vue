@@ -4,22 +4,22 @@
       <div class="navbar-translate">
         <slot v-bind="slotData"></slot>
         <navbar-toggle-button
-          :toggled="showMenu"
-          @click.native.stop="toggle"
+            :toggled="showMenu"
+            @click.native.stop="toggle"
         ></navbar-toggle-button>
       </div>
       <div
-        class="navbar-collapse collapse"
-        v-click-outside="close"
-        :style="menuImage ? `background: url(${menuImage}) 0% 0% / cover;` : ''"
-        :class="[
+          class="navbar-collapse collapse"
+          v-click-outside="close"
+          :style="menuImage ? `background: url(${menuImage}) 0% 0% / cover;` : ''"
+          :class="[
           { show: showMenu },
           { 'has-image': menuImage },
           navMenuClasses
         ]"
-        v-if="$slots['navbar-menu'] || $scopedSlots['navbar-menu']"
-        data-color="orange"
-        id="navigation"
+          v-if="$slots['navbar-menu'] || $scopedSlots['navbar-menu']"
+          data-color="orange"
+          id="navigation"
       >
         <slot name="before-menu"></slot>
         <ul class="navbar-nav" :class="menuClasses">
@@ -118,7 +118,7 @@ export default {
       let color = `bg-${this.type}`;
       let navPosition = `navbar-${this.position}`;
       let colorOnScrollTransparent =
-        this.colorOnScroll && this.currentScrollValue < this.colorOnScroll;
+          this.colorOnScroll && this.currentScrollValue < this.colorOnScroll;
 
       if (this.position === 'fixed') {
         navPosition = 'fixed-top';
@@ -159,7 +159,7 @@ export default {
     },
     handleScroll() {
       let scrollValue =
-        document.body.scrollTop || document.documentElement.scrollTop;
+          document.body.scrollTop || document.documentElement.scrollTop;
       this.currentScrollValue = scrollValue;
       if (this.colorOnScroll > 0 && scrollValue > this.colorOnScroll) {
         this.extraNavClasses = `bg-${this.type}`;

@@ -34,12 +34,10 @@
               id="eventType"
               aria-describedby="eventTypeHelp"
           >
-            <option value="FCFS">선착순</option>
             <option value="CONFIRMATIVE">관리자 확인</option>
           </select>
           <small id="eventTypeHelp" class="form-text text-muted">
-            두가지 모집 방법이 있습니다.<br />
-            <strong>선착순</strong>: 모집 인원 이내의 접수는 자동으로 확정됩니다.<br />
+            현재 한 가지 모집 방법이 있습니다.<br/>
             <strong>확인</strong>: 관리자가 신청을 직접 승인합니다.
           </small>
         </div>
@@ -56,11 +54,15 @@
                 class="form-control"
                 placeholder="0"
                 aria-describedby="limitOfEnrollmentsHelp"
+                min="2"
+                max="5"
             />
             <small id="limitOfEnrollmentsHelp" class="form-text text-muted">
               최대 수용 가능한 모임 참석 인원을 설정하세요. 최소 2인 이상 모임이어야 합니다.
             </small>
-            <small v-if="errors.limitOfEnrollments" class="form-text text-danger">{{ errors.limitOfEnrollments }}</small>
+            <small v-if="errors.limitOfEnrollments" class="form-text text-danger">{{
+                errors.limitOfEnrollments
+              }}</small>
           </div>
 
           <!-- 등록 마감 일시 -->
@@ -77,7 +79,9 @@
             <small id="endEnrollmentDateTimeHelp" class="form-text text-muted">
               등록 마감 이전에만 스터디 모임 참가 신청을 할 수 있습니다.
             </small>
-            <small v-if="errors.endEnrollmentDateTime" class="form-text text-danger">{{ errors.endEnrollmentDateTime }}</small>
+            <small v-if="errors.endEnrollmentDateTime" class="form-text text-danger">{{
+                errors.endEnrollmentDateTime
+              }}</small>
           </div>
 
           <!-- 모임 시작 일시 -->
@@ -167,10 +171,8 @@
 </template>
 
 
-
-
 <script>
-import { Modal } from "@/components";
+import {Modal} from "@/components";
 
 export default {
   components: {
@@ -226,7 +228,6 @@ export default {
       if (Object.keys(this.errors).length > 0) {
         return;
       }
-
       // 제출 데이터 생성
       const payload = {
         title: this.eventForm.title,
@@ -266,13 +267,16 @@ export default {
 .form-group small {
   color: #6c757d;
 }
+
 .form-group {
   margin-bottom: 2rem; /* 폼 그룹 간 기본 간격 */
 }
+
 /* "모임 설명"과 위 필드 간 간격 추가 */
 .description-section {
   margin-top: 3.5rem; /* 위 필드와의 간격 */
 }
+
 label {
   color: #000; /* 검정색 */
 }

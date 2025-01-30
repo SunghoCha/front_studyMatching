@@ -87,7 +87,7 @@ export default {
     };
   },
   mounted() {
-    this.fetchAllZones(); // 전체 지역 목록 로드
+    this.$store.dispatch('zones/loadAllZones');
     this.fetchUserZones(); // 유저 지역 목록 로드
   },
   computed: {
@@ -102,6 +102,7 @@ export default {
       console.log("전체 지역 목록 (computed):", zones);
 
       return this.$store.getters["zones/allZones"].map(zone => ({
+        id: zone.id,
         localName: zone.localName,
         province: zone.province,
         displayName: zone.province === "none"
@@ -113,8 +114,10 @@ export default {
   methods: {
     async fetchUserZones() {
       try {
-        await this.$store.dispatch("zones/loadUserZones", this.userId);
+        await this.$store.dispatch("zones/loadUserZones");
+        console.log("Vuex에서 가져온 유저 지역 목록:", this.userZones);
         this.zones = this.userZones.map((zone) => ({
+          id: zone.id,
           localName: zone.localName,
           province: zone.province,
           displayName: `${zone.localName} (${zone.province})`,
@@ -122,19 +125,6 @@ export default {
         console.log("유저 지역 설정 완료", this.zones);
       } catch (error) {
         this.error = error.message || "유저 지역 목록을 불러오는데 실패했습니다.";
-      }
-    },
-    async fetchAllZones() {
-      try {
-        await this.$store.dispatch('zones/loadAllZones');
-        this.zones = this.userZones.map((zone) => ({
-          localName: zone.localName,
-          province: zone.province,
-          displayName: `${zone.localName} (${zone.province})`,
-        }));
-        console.log("전체 지역 설정 완료", this.zones);
-      } catch (error) {
-        this.error = error.message || "전체 지역 목록을 불러오는데 실패했습니다.";
       }
     },
     onInput() {
@@ -155,20 +145,15 @@ export default {
     },
     async submitForm() {
       const formData = {
-        zones: this.zones.map((zone) => ({
-          localName: zone.localName,
-          province: zone.province,
-        })),
+        zoneIds: this.zones.map((zone) => zone.id,),
       };
 
-      console.log("전송할 지역 목록:", formData.zones);
+      console.log("전송할 지역 목록:", formData.zoneIds);
       try {
-        const updatedZones = await this.$store.dispatch("zones/editZone", {
-          payload: formData,
-          userId: this.userId,
-        });
+        const updatedZones = await this.$store.dispatch("zones/editZone", formData);
 
         this.zones = updatedZones.map((zone) => ({
+          id: zone.id,
           localName: zone.localName,
           province: zone.province,
           displayName: `${zone.localName} (${zone.province})`,

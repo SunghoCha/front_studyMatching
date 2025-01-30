@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <navbar type="primary">
+    <navbar class="subbar" type="primary">
       <template slot="navbar-menu">
         <!-- 제목 정렬 -->
         <li class="nav-item">
@@ -8,7 +8,7 @@
             <label for="titleSortOptions" class="form-label">제목 정렬</label>
             <select
                 id="titleSortOptions"
-                class="form-control"
+                class="form-control styled-select"
                 v-model="titleSort"
                 @change="onSortChange"
             >
@@ -24,7 +24,7 @@
             <label for="dateSortOptions" class="form-label">날짜 정렬</label>
             <select
                 id="dateSortOptions"
-                class="form-control"
+                class="form-control styled-select"
                 v-model="dateSort"
                 @change="onSortChange"
             >
@@ -43,10 +43,10 @@
               placeholder="Search..."
               v-model="searchQuery"
           />
-          <button class="btn btn-primary search-button" @click="onSearch">
+          <button class="btn search-button" @click="onSearch">
             Search
           </button>
-          <button class="btn btn-primary reset-button" @click="onResetSearch">
+          <button class="btn reset-button" @click="onResetSearch">
             <i class="fas fa-times"></i>
           </button>
         </li>
@@ -56,49 +56,38 @@
 </template>
 
 <script>
-import {Navbar} from "@/components";
+import { Navbar } from "@/components";
 
 export default {
-  components: {Navbar},
+  components: { Navbar },
   data() {
     return {
-      titleSort: "titleAsc", // 제목 정렬 상태
-      dateSort: "dateDesc",          // 날짜 정렬 초기화
+      titleSort: "titleAsc",
+      dateSort: "dateDesc",
       searchQuery: "",
     };
   },
   methods: {
     onSortChange() {
-      console.log("Title Sort:", this.titleSort);
-      console.log("Date Sort:", this.dateSort);
-
       const sortOptions = [];
-
-      // 제목 정렬이 활성화된 경우 추가
       if (this.titleSort) {
         sortOptions.push({
           type: "title",
           order: this.titleSort === "titleAsc" ? "asc" : "desc",
         });
       }
-
-      // 날짜 정렬이 활성화된 경우 추가
       if (this.dateSort) {
         sortOptions.push({
           type: "publishedDateTime",
           order: this.dateSort === "dateAsc" ? "asc" : "desc",
         });
       }
-
-      console.log("Emitting sortChanged event with options:", sortOptions);
       this.$emit("sortChanged", sortOptions);
     },
     onSearch() {
-      console.log("Search button clicked. Search query:", this.searchQuery);
-      this.searchQueryUpdated(); // 버튼 검색
+      this.searchQueryUpdated();
     },
     onResetSearch() {
-      console.log("Reset search triggered");
       this.searchQuery = "";
       this.searchQueryUpdated();
     },
@@ -110,6 +99,14 @@ export default {
 </script>
 
 <style scoped>
+/* Subbar 스타일 */
+.subbar {
+  background-color: #f96332; /* 새로운 색상 */
+  padding: 10px 20px;
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 살짝 음영 */
+}
+
 /* Navbar 전체 레이아웃 */
 ::v-deep(.navbar-nav) {
   display: flex;
@@ -131,11 +128,51 @@ export default {
 ::v-deep(.search-input) {
   flex-grow: 1;
   height: 38px;
+  border-radius: 8px;
+  background-color: rgba(255, 165, 0, 0.1);
+  border: 1px solid rgba(255, 165, 0, 0.5);
+  padding: 8px;
+  font-size: 14px;
+  color: #333;
 }
 
 /* 검색 버튼 스타일 */
 ::v-deep(.search-button) {
   height: 38px;
-  line-height: 1.2;
+  border-radius: 8px;
+  background-color: rgba(255, 140, 0, 0.8);
+  color: white;
+  border: none;
+  padding: 0 15px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 리셋 버튼 스타일 */
+::v-deep(.reset-button) {
+  height: 38px;
+  border-radius: 8px;
+  background-color: rgba(255, 99, 71, 0.8);
+  color: white;
+  border: none;
+  padding: 0 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Hover 효과 */
+::v-deep(.search-button:hover),
+::v-deep(.reset-button:hover) {
+  filter: brightness(1.1);
+}
+
+/* Select 스타일 */
+::v-deep(.styled-select) {
+  border-radius: 8px;
+  background-color: rgba(255, 165, 0, 0.1);
+  border: 1px solid rgba(255, 165, 0, 0.5);
+  padding: 5px;
+  font-size: 14px;
 }
 </style>

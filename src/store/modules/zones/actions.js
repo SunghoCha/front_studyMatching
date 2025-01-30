@@ -4,11 +4,11 @@ const apiUrl = process.env.VUE_APP_API_URL;
 
 export default {
 
-    async loadUserZones(context, userId) {
-        console.log("유저 태그목록 비동기 요청 보냄")
+    async loadUserZones(context) {
+        console.log("유저 지역 목록 비동기 요청 보냄")
         const accessToken = store.getters['auth/token'];
 
-        const response = await fetch(`${apiUrl}/user-zone/${userId}`, {
+        const response = await fetch(`${apiUrl}/user-zone`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -49,19 +49,17 @@ export default {
         context.commit('setAllZones', responseData);
     },
 
-    async editZone(context, {payload, userId}) {
-        console.log("지역 수정 요청 전송 시작:" + userId);
+    async editZone(context, zoneIds) {
+        console.log("지역 수정 요청 전송 시작:");
         const accessToken = store.getters['auth/token'];
-
-        const response = await fetch(`${apiUrl}/user-tag/`, {
+        console.log("전달 데이터: ", JSON.stringify(zoneIds));
+        const response = await fetch(`${apiUrl}/user-zone`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                zones: payload.zones
-            })
+            body: JSON.stringify(zoneIds)
         });
         console.log("지역 수정 요청 전송 완료")
 
@@ -70,7 +68,7 @@ export default {
         if (!response.ok) {
             throw new Error(responseData.message || 'zone 등록에 실패하였습니다.')
         }
-        context.commit("")
-        return responseData.zone;
+        context.commit("setUserZones")
+        return responseData;
     },
 };

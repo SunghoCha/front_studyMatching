@@ -7,7 +7,7 @@
     <div class="content">
       <div class="container">
         <div class="col-md-5 ml-auto mr-auto">
-          <card type="login" plain>
+          <base-card type="login" plain>
             <div slot="image">
               <div class="social-icons">
                 <a href="https://link-to-facebook.com" target="_blank">
@@ -21,7 +21,6 @@
                 </a>
               </div>
             </div>
-
 
             <template slot="raw-content">
               <div class="card-footer text-center">
@@ -63,19 +62,20 @@
                 </h6>
               </div>
             </template>
-          </card>
+          </base-card>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {Card, Button, FormGroupInput} from '@/components';
+import { Button, FormGroupInput} from '@/components';
+import BaseCard from "@/components/Cards/BaseCard.vue";
 export default {
   name: 'login-page',
   bodyClass: 'login-page',
   components: {
-    Card,
+    BaseCard,
     [Button.name]: Button,
     [FormGroupInput.name]: FormGroupInput
   },

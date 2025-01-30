@@ -8,4 +8,7 @@ export default {
     currentEnrollment(state) {
         return state.currentEnrollment;
     },
+    currentEvent(state) {
+        return state.currentEvent;
+    }
 }

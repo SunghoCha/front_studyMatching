@@ -6,11 +6,9 @@ export default {
     namespaced: true,
     state() {
         return {
-            newEvents: [],
-            oldEvents: [],
-            currentEnrollment: null,
-            currentEvent: null
-        }
+            isMainNavbarOpen: false,
+            isSubNavbarOpen: false,
+        };
     },
     mutations,
     actions,

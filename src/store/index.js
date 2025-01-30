@@ -8,6 +8,7 @@ import tagModule from './modules/tags/index.js';
 import zoneModule from './modules/zones/index.js';
 import studyModule from './modules/studies/index.js'
 import eventModule from './modules/events/index'
+import navbarModule from './modules/navbar/index'
 // Vuex 플러그인 등록
 Vue.use(Vuex);
 
@@ -19,10 +20,11 @@ const store = new Vuex.Store({
         zones: zoneModule,
         studies: studyModule,
         events: eventModule,
+        navbar: navbarModule,
     },
     plugins: [createPersistedState({
         storage: window.sessionStorage,
-        paths: ['items', 'auth', 'tags', 'studies']
+        paths: ['items', 'auth', 'tags', 'studies', 'navbar']
     })]
 });
 

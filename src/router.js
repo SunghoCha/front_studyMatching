@@ -18,6 +18,7 @@ import myStudyList from "@/pages/ManagedStudyList.vue";
 import managedStudyList from "@/pages/ManagedStudyList.vue";
 import joinedStudyList from "@/pages/JoinedStudyList.vue";
 import studyWishList from "@/pages/StudyWishList.vue";
+import Notifications from "@/pages/Notifications.vue";
 
 
 Vue.use(Router);
@@ -138,6 +139,14 @@ const router = new Router({
       path: '/study-event',
       name: 'EventForm',
       components: { default: EventForm, header: MainNavbar, footer: MainFooter },
+      props: {
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/notifications',
+      name: 'Notifications',
+      components: { default: Notifications, header: MainNavbar, footer: MainFooter },
       props: {
         footer: { backgroundColor: 'black' }
       }

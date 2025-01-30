@@ -135,7 +135,7 @@ export default {
       try {
         this.studyForm.fullDescription = this.$refs.fullDescriptionEditor.invoke('getMarkdown');
         await this.$store.dispatch("studies/createStudy", this.studyForm);
-        await this.$router.replace("/study-info");
+        await this.$router.replace(`/study-info/${this.studyForm.path}`);
 
       } catch (error) {
         if (error.response && error.response.data) {
