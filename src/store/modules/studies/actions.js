@@ -24,8 +24,8 @@ export default {
         console.log("스터디 생성 완료")
 
         if (!response.ok) {
-            const error = new Error(responseData.message || '스터디 생성 실패');
-            throw error;
+            console.log("스터디 생성 실패")
+            throw responseData;
         }
 
         context.commit("setCurrentStudy", responseData);
@@ -46,8 +46,7 @@ export default {
 
         if (!response.ok) {
             console.log("스터디 목록 반환 실패")
-            const error = new Error(responseData.message || `스터디 목록 반환 실패`)
-            throw error;
+            throw responseData;
         }
         context.commit('setCurrentStudy', responseData);
 
@@ -91,8 +90,7 @@ export default {
 
         if (!response.ok) {
             console.log("스터디 목록 반환 실패")
-            const error = new Error(responseData.message || `스터디 목록 반환 실패`)
-            throw error;
+            throw responseData;
         }
 
         const studyList = responseData.content;
@@ -153,8 +151,7 @@ export default {
 
         if (!response.ok) {
             console.log("스터디 목록 반환 실패")
-            const error = new Error(responseData.message || `스터디 목록 반환 실패`)
-            throw error;
+            throw responseData;
         }
 
         const studyList = responseData.content;

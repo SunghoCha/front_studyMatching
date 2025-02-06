@@ -1,22 +1,5 @@
 <template>
   <div>
-    <!-- Error Modal -->
-    <modal
-        :show="errorModalVisible"
-        :show-close="true"
-        type="notice"
-        @close="handleErrorModalClose"
-    >
-      <template v-slot:header>
-        <h5 class="modal-title">오류 발생</h5>
-      </template>
-      <template v-slot:default>
-        <p>{{ errorMessage }}</p>
-      </template>
-      <template v-slot:footer>
-        <button class="btn btn-primary" @click="redirectToHome">홈으로 이동</button>
-      </template>
-    </modal>
 
     <!-- Page Content -->
     <div class="page-header clear-filter" filter-color="orange">
@@ -81,12 +64,10 @@
 
 <script>
 import StudyMenu from "@/pages/StudyMenu.vue";
-import Modal from "@/components/Modal.vue"; // Modal 컴포넌트 경로에 맞게 import
 
 export default {
   components: {
     StudyMenu,
-    Modal,
   },
   props: ["path"],
   data() {

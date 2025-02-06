@@ -30,6 +30,32 @@ export default {
         }
         return responseData;
     },
+    async updateEvent(context, {payload, path, eventId}) {
+        const accessToken = store.getters['auth/token'];
+        console.log("모임 수정 요청 전송 시작:", path)
+        const response = await fetch(`${apiUrl}/study/${path}/events/${eventId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: payload.title,
+                description: payload.description || "",
+                endEnrollmentDateTime: payload.endEnrollmentDateTime,
+                startDateTime: payload.startDateTime,
+                endDateTime: payload.endDateTime,
+                limitOfEnrollments: payload.limitOfEnrollments || 2
+            })
+        });
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            console.log("모임 수정 실패")
+            throw new Error(responseData.errorMessage || '모임 수정에 실패하였습니다.')
+        }
+        return responseData;
+    },
     async getEvent(context, {path, eventId}) {
         const accessToken = store.getters['auth/token'];
         console.log("모임 조회 요청 시작")
@@ -80,7 +106,6 @@ export default {
                 "Content-Type": "application/json",
             }
         });
-        const responseData = await response.json();
 
         if (!response.ok) {
             console.log("모임 삭제 실패");
@@ -118,8 +143,9 @@ export default {
             }
         });
 
+        const responseData = await response.json();
+
         if (!response.ok) {
-            const responseData = await response.json().catch(() => null); // JSON 파싱 실패 시 null 반환
             console.log("모임 참가 취소 실패");
             throw new Error(responseData?.errorMessage || '모임 참가 취소에 실패하였습니다.');
         }

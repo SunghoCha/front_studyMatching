@@ -74,10 +74,10 @@
                 v-model="eventForm.endEnrollmentDateTime"
                 class="form-control"
                 aria-describedby="endEnrollmentDateTimeHelp"
-                required
+                disabled
             />
             <small id="endEnrollmentDateTimeHelp" class="form-text text-muted">
-              등록 마감 이전에만 스터디 모임 참가 신청을 할 수 있습니다.
+              등록 마감 일시는 수정할 수 없습니다.
             </small>
             <small v-if="errors.endEnrollmentDateTime" class="form-text text-danger">{{
                 errors.endEnrollmentDateTime
@@ -93,10 +93,10 @@
                 v-model="eventForm.startDateTime"
                 class="form-control"
                 aria-describedby="startDateTimeHelp"
-                required
+                disabled
             />
             <small id="startDateTimeHelp" class="form-text text-muted">
-              모임 시작 일시를 입력하세요. 상세한 모임 일정은 본문에 적어주세요.
+              모임 시작 일시는 수정할 수 없습니다.
             </small>
             <small v-if="errors.startDateTime" class="form-text text-danger">{{ errors.startDateTime }}</small>
           </div>
@@ -110,10 +110,10 @@
                 v-model="eventForm.endDateTime"
                 class="form-control"
                 aria-describedby="endDateTimeHelp"
-                required
+                disabled
             />
             <small id="endDateTimeHelp" class="form-text text-muted">
-              모임 종료 일시가 지나면 모임은 자동으로 종료 상태로 바뀝니다.
+              모임 종료 일시는 수정할 수 없습니다.
             </small>
             <small v-if="errors.endDateTime" class="form-text text-danger">{{ errors.endDateTime }}</small>
           </div>
@@ -139,7 +139,7 @@
         <!-- 제출 버튼 -->
         <div class="form-group">
           <button class="btn btn-primary btn-block" type="submit">
-            모임 만들기
+            모임 수정하기
           </button>
         </div>
       </form>
@@ -159,20 +159,37 @@ export default {
       type: Object,
       required: true,
     },
+    selectedEvent: {
+      type: Object,
+      required: true,
+    }
   },
   data() {
     return {
       errors: {},
+      existingLimitOfEnrollments: 0, // 기존 모집 인원
       eventForm: {
         title: "",
         description: "",
-        eventType: "FCFS",
+        eventType: "CONFIRMATIVE",
         limitOfEnrollments: 0,
         endEnrollmentDateTime: "",
         startDateTime: "",
         endDateTime: "",
       },
     };
+  },
+  watch: {
+    selectedEvent: {
+      handler(newEvent) {
+        if (newEvent) {
+          this.eventForm = { ...newEvent }; //  selectedEvent를 eventForm에 복사
+          this.existingLimitOfEnrollments = newEvent.limitOfEnrollments || 2; // 기존 모집 인원 저장
+        }
+      },
+      deep: true,
+      immediate: true //  컴포넌트가 마운트될 때 초기 값 적용
+    }
   },
   methods: {
     async handleSubmit() {
@@ -182,8 +199,8 @@ export default {
       if (!this.eventForm.title || this.eventForm.title.length > 50) {
         this.errors.title = "모임 이름은 필수이며 50자를 초과할 수 없습니다.";
       }
-      if (this.eventForm.limitOfEnrollments < 2) {
-        this.errors.limitOfEnrollments = "모임 인원은 최소 2명 이상이어야 합니다.";
+      if (this.eventForm.limitOfEnrollments < this.existingLimitOfEnrollments) {
+        this.errors.limitOfEnrollments = `모집 인원은 기존(${this.existingLimitOfEnrollments}명) 이상으로 설정해야 합니다.`;
       }
       if (!this.eventForm.endEnrollmentDateTime) {
         this.errors.endEnrollmentDateTime = "등록 마감 일시를 입력해주세요.";
@@ -215,16 +232,19 @@ export default {
 
       try {
         // API 호출
-        const responseData = await this.$store.dispatch("events/registerEvent", {
+        const responseData = await this.$store.dispatch("events/updateEvent", {
           payload,
           path: this.study.path,
+          eventId: this.selectedEvent.eventId
         });
 
-        alert("모임이 성공적으로 등록되었습니다!");
+        const eventId = responseData.eventId;
+
+        alert("모임이 성공적으로 수정되었습니다!");
 
         window.location.reload();
       } catch (error) {
-        alert("모임 등록 중 문제가 발생했습니다. 다시 시도해주세요.");
+        alert("모임 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
       }
     },
   },

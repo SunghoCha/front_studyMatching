@@ -13,44 +13,66 @@
       v-click-outside="closeDropDown"
   >
     <slot name="title">
-      <a class="dropdown-toggle nav-link" :class="{ 'no-caret': hideArrow }">
+      <a
+          class="dropdown-toggle nav-link"
+          :class="{ 'no-caret': hideArrow }"
+          data-toggle="dropdown"
+      >
         <i :class="icon"></i>
         <span class="no-icon">{{ title }}</span>
       </a>
     </slot>
     <ul
         class="dropdown-menu"
-        :class="[ { 'dropdown-menu-right': position === 'right' }, { show: isOpen } ]"
+        :class="[
+        { 'dropdown-menu-right': position === 'right' },
+        { show: isOpen }
+      ]"
     >
       <slot></slot>
     </ul>
   </component>
 </template>
-
 <script>
 export default {
   name: 'drop-down',
   props: {
-    direction: {type: String, default: 'down'},
+    direction: {
+      type: String,
+      default: 'down'
+    },
     title: String,
     icon: String,
     position: String,
     hideArrow: Boolean,
-    tag: {type: String, default: 'li'},
-    isOpen: Boolean // ✅ 부모에서 열림/닫힘 상태를 제어할 수 있도록 변경
+    tag: {
+      type: String,
+      default: 'li'
+    }
+  },
+  data() {
+    return {
+      isOpen: false
+    };
+  },
+  provide() {
+    return {
+      closeDropDown: this.closeDropDown
+    }
   },
   methods: {
     toggleDropDown() {
-      this.$emit('update:isOpen', !this.isOpen); // ✅ 부모에게 상태 변경 요청
+      this.isOpen = !this.isOpen;
+      this.$emit('change', this.isOpen);
     },
     closeDropDown() {
-      this.$emit('update:isOpen', false); // ✅ 부모에서 닫을 수 있도록 이벤트 전달
+      this.isOpen = false;
+      this.$emit('change', this.isOpen);
     }
   }
 };
 </script>
-
-<style scoped>
+<style>
 .dropdown {
   list-style-type: none;
 }

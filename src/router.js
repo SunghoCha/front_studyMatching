@@ -19,6 +19,7 @@ import managedStudyList from "@/pages/ManagedStudyList.vue";
 import joinedStudyList from "@/pages/JoinedStudyList.vue";
 import studyWishList from "@/pages/StudyWishList.vue";
 import Notifications from "@/pages/Notifications.vue";
+import EventInfo from "@/pages/EventInfo.vue";
 
 
 Vue.use(Router);
@@ -96,12 +97,9 @@ const router = new Router({
       }
     },
     {
-      path: '/study-info2',
-      name: 'StudyInfo2',
-      components: { default: studyInfo2, header: MainNavbar, footer: MainFooter },
-      props: {
-        footer: { backgroundColor: 'black' }
-      }
+      path: "/study-info/:path/events/:eventId",
+      name: "EventDetails",
+      component: EventInfo,
     },
     {
       path: '/study-list',

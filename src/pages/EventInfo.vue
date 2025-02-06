@@ -11,7 +11,8 @@
     <div>
       <!-- 관리자 권한 버튼 -->
       <template v-if="isManager">
-        <button @click="editEvent" class="btn btn-warning">모임 수정</button>
+        <button @click="$emit('edit-event')" class="btn btn-warning">모임 수정</button>
+
         <button @click="deleteEvent" class="btn btn-danger">모임 삭제</button>
       </template>
       <!-- 일반 사용자 버튼 -->
@@ -152,14 +153,6 @@ export default {
       } catch (error) {
         console.error("모임 조회 중 오류 발생:", error);
         alert("모임 조회에 실패했습니다. 다시 시도해 주세요.");
-      }
-    },
-    async editEvent() {
-      try {
-        // 수정 페이지로 이동
-        await this.$router.push(`/study/${this.path}/events/${this.event.eventId}/edit`);
-      } catch (error) {
-        console.error("모임 수정 중 오류 발생:", error);
       }
     },
     async deleteEvent() {

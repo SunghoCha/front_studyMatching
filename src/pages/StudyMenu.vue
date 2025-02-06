@@ -69,6 +69,8 @@
                     :study="study"
                     @view-event="viewEvent"
                     @back-to-list="resetEventSelection"
+                    @edit-event="handleEditEvent"
+                    @event-updated="handleEventUpdated"
                 />
               </div>
             </div>
@@ -89,7 +91,6 @@
                     :is="currentComponent"
                     :study="study"
                     @update-description="updateDescription"
-                    @show-modal="showModal"
                 />
               </div>
             </div>
@@ -97,27 +98,6 @@
         </tabs>
       </div>
     </nav>
-
-    <!-- 수정 완료 모달 -->
-    <modal
-        v-if="modalVisible"
-        :show="modalVisible"
-        type="notice"
-        @close="closeModal"
-        :modalClasses="'custom-modal-dialog'"
-        :header-classes="'custom-modal-header'"
-    >
-      <template v-slot:header>
-        <h5>알림</h5>
-      </template>
-      <template>
-        <p>{{ modalMessage }}</p>
-      </template>
-      <template v-slot:footer>
-        <button class="btn btn-primary" @click="closeModal">확인</button>
-      </template>
-    </modal>
-
   </div>
 </template>
 
@@ -129,18 +109,17 @@ import StudyDescriptionForm from "@/pages/StudyDescriptionForm.vue";
 import StudyZoneForm from "@/pages/StudyZoneForm.vue";
 import StudyTagsForm from "@/pages/StudyTagsForm.vue";
 import StudySettingForm from "@/pages/StudySettingForm.vue";
-import Modal from "@/components/Modal.vue";
 import EventSidebar from "@/pages/EventSidebar.vue";
 import EventForm from "@/pages/EventForm.vue";
 import EventList from "@/pages/EventList.vue";
 import EventInfo from "@/pages/EventInfo.vue";
 import EventIntroduction from "@/pages/EventIntroduction.vue";
 import StudyBannerForm from "@/pages/StudyBannerForm.vue";
+import EventEditForm from "@/pages/EventEditForm.vue";
 
 export default {
   components: {
     EventSidebar,
-    Modal,
     StudySidebar,
     TabPane,
     Tabs,
@@ -153,6 +132,7 @@ export default {
     EventList,
     EventInfo,
     EventIntroduction,
+    EventEditForm,
 
   },
   props: {
@@ -179,8 +159,6 @@ export default {
         newEvents: "EventList",
         oldEvents: "EventList",
       },
-      modalVisible: false, // 모달 표시 여부
-      modalMessage: "", // 모달 메시지
     };
   },
   computed: {
@@ -197,6 +175,8 @@ export default {
         case "oldEvents":
           // 상세 보기 또는 목록 보기 결정
           return this.selectedEvent ? "EventInfo" : "EventList";
+        case "editEvent":
+          return "EventEditForm";
         default:
           return "EventList"; // 기본값
       }
@@ -234,28 +214,28 @@ export default {
       }
     },
     async joinStudy() {
+      const confirmed = confirm("참가하시겠습니까?");
+      if (!confirmed) return;
       await this.$store.dispatch('studies/joinStudy', this.study.path);
       console.log("스터디 참가 성공");
-      // TODO: 삭제 예정
-      this.$nextTick(() => {
-        console.log("스터디 참가 상태:", this.study.isMember); // 반영된 상태
-      });
     },
     async leaveStudy() {
-      // TODO: 모달로 변경
       const confirmed = confirm("참가를 취소하시겠습니까?");
       if (!confirmed) return;
       await this.$store.dispatch('studies/leaveStudy', this.study.path);
       console.log("스터디 참가취소 성공");
-      this.$nextTick(() => {
-        console.log("스터디 참가 상태:", this.study.isMember); // 반영된 상태
-      });
     },
     viewEvent(event) {
       this.selectedEvent = event; // 선택된 모임 설정
     },
     resetEventSelection() {
       this.selectedEvent = null; // 모임 선택 초기화
+    },
+    handleEditEvent() {
+      this.eventMenu ="editEvent";
+    },
+    handleEventUpdated() {
+      this.eventMenu = "newEvents";
     },
     updateDescription(updatedData) {
       // Vuex 상태 업데이트
@@ -267,14 +247,7 @@ export default {
     formatMemberInfo(member) {
       return `${member.name} 님 (${member.email})`;
     },
-    showModal(message) {
-      console.log("모달 메시지:", message);
-      this.modalMessage = message;
-      this.modalVisible = true;
-    },
-    closeModal() {
-      this.modalVisible = false; // 모달 닫기
-    },
+
   }
 }
 </script>
@@ -292,46 +265,6 @@ p {
   color: black;
   padding: 0 16px;
   margin: 0;
-}
-
-.custom-modal-dialog {
-  margin-top: 20%; /* 화면 위에서 아래로 20% */
-  transform: translateY(-10%); /* 세로 정렬 유지 */
-}
-
-.custom-modal-header {
-  background-color: #f4f4f4; /* 헤더 배경색 */
-  padding: 0.5rem 1rem; /* 상단 여백 줄이기 */
-  border-bottom: 1px solid #ddd; /* 구분선 */
-  display: flex;
-  justify-content: space-between; /* 좌우 정렬 */
-  align-items: flex-start; /* 상단 정렬 */
-}
-
-.custom-modal-header h5 {
-  margin: 0;
-  font-size: 1.25rem; /* 텍스트 크기 */
-  color: #333; /* 텍스트 색상 */
-}
-
-.custom-modal-header .btn-close {
-  background: none;
-  border: none;
-  font-size: 1.2rem; /* 닫기 버튼 크기 */
-  cursor: pointer;
-  color: #999;
-  margin-top: -4px; /* 닫기 버튼을 조금 더 위로 이동 */
-}
-
-.custom-modal-header .btn-close:hover {
-  color: #666;
-}
-
-.formatted-text {
-  text-align: left; /* 텍스트를 왼쪽 정렬 */
-  line-height: 1.8; /* 줄 간격 설정 */
-  margin-bottom: 1rem; /* 문단 간 간격 */
-  color: #333; /* 텍스트 색상 */
 }
 
 .study-full-description {

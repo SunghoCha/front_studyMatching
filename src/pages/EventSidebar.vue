@@ -35,7 +35,7 @@ export default {
         introduction: {label: "소개", icon: "fa fa-info-circle"}, // 소개: 정보 아이콘
         registerEvent: {label: "모임 생성", icon: "fa fa-calendar-plus",  requiresManager: true}, // 모임 생성: 일정 추가 아이콘
         newEvents: {label: "새 모임", icon: "fa fa-calendar-check"}, // 새 모임: 일정 확인 아이콘
-        oldEvents: {label: "지난 모임", icon: "fa fa-calendar-alt"}, // 지
+        oldEvents: {label: "지난 모임", icon: "fa fa-calendar-alt"},
       },
     };
   },
